@@ -1,0 +1,58 @@
+# made by passes.py: the rendered layers of the table lantern-fair
+size 412 400
+world 0.0022 232.0 392.0
+matrix 4.565961837768555 0.0 0.0 -1.1652334928512573 0.0 3.173466682434082 3.470844030380249 -1.03652822971344 0.0 0.7381632328033447 -0.6749184131622314 1.1641056537628174 0.0 0.7380157113075256 -0.6747835278511047 1.3638529777526855
+eye 0.25519999861717224 -0.8578225374221802 1.0829641819000244
+basis 1.0 0.0 0.0 0.0 0.6747835278511047 0.7380157113075256 0.0 -0.7380157113075256 0.6747835278511047
+lamp again 128 129
+lamp coaster1 22 51
+lamp coaster2 30 47
+lamp coaster3 22 39
+lamp dipper1 22 51
+lamp dipper2 33 45
+lamp dipper3 23 40
+lamp extra 30 53
+lamp fair1 68 0
+lamp fair2 57 0
+lamp fair3 110 0
+lamp fair4 95 1
+lamp fortune1 22 47
+lamp fortune2 30 42
+lamp fortune3 33 67
+lamp inL 30 41
+lamp inR 282 119
+lamp jackpot 22 59
+lamp lock 46 15
+lamp mode0 22 37
+lamp mode1 23 48
+lamp mode2 21 45
+lamp mode3 76 45
+lamp mode4 22 174
+lamp mode5 26 56
+lamp mode6 23 64
+lamp mode7 23 37
+lamp mult2 22 106
+lamp mult3 26 43
+lamp mult4 22 77
+lamp mult5 70 208
+lamp mult6 121 41
+lamp orbitL1 30 93
+lamp orbitL2 40 31
+lamp orbitL3 32 53
+lamp orbitR1 31 79
+lamp orbitR2 25 45
+lamp orbitR3 28 50
+lamp outL 30 71
+lamp outR 295 133
+lamp pop1 40 1
+lamp pop2 61 0
+lamp pop3 60 7
+lamp wizard 21 120
+flipper flipL 3 72 246 0.4887 -0.4189
+flipper flipR 3 189 246 2.6529 3.5605
+flipper upR 3 271 144 2.618 3.5256
+drop gallery1 174 113
+drop gallery2 185 113
+drop gallery3 195 113
+plunger 3 346 281 12.0
+probes 6 10 64 32 16 200 30 350

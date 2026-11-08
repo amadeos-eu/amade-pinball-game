@@ -1,6 +1,6 @@
 # amade-pinball-game
 
-**amade-pinball-game** is the pinball machine of the [amadeOS](https://github.com/amadeos-eu/amadeos) desktop: three original tables, each seen from the player's end in perspective, with ramps and wire returns, pop bumpers, slingshots, drop targets, spinners, toys, a ball lock and multiball, eight modes and a wizard mode. The chrome ball rolls, bounces and spins by real physics; a dot-matrix display tells what is running. One to four players take turns. Built on [amade-game-engine](https://github.com/amadeos-eu/amade-game-engine); runs on other operating systems as well.
+**amade-pinball-game** is the pinball machine of the [amadeOS](https://github.com/amadeos-eu/amadeos) desktop: three original tables, rendered in Blender and seen from the player's end, with ramps and wire returns, pop bumpers, slingshots, drop targets, spinners, toys, a ball lock and multiball, eight modes and a wizard mode. The chrome ball rolls, bounces and spins by real physics; a dot-matrix display tells what is running. One to four players take turns. Built on [amade-game-engine](https://github.com/amadeos-eu/amade-game-engine); runs on other operating systems as well.
 
 ![License](https://img.shields.io/badge/license-EUPL--1.2-blue)
 ![Java](https://img.shields.io/badge/Java-25-orange)
@@ -82,13 +82,17 @@ saucer fortune 104 190 p6 out=95 kick=340
 mode Coaster shots=coaster count=3 time=40 value=60000
 ```
 
-The same file draws the table and builds its physics, so a new table needs no code.
+The same file builds the table's physics and its picture, so a new table needs no code.
+
+## The rendered pictures
+
+What the player sees is rendered ahead of time in Blender, from the table files, into `src/main/resources/eu/amadeos/games/pinball/render/<id>/`: the machine with its lamps off, what each lamp adds when lit, the flippers, drop targets and plunger in their positions, the ramps and plastics alone, the distance of every pixel, and panoramas for the chrome ball's reflections. `RenderedView` puts them together every frame. After moving parts in a table file, render it again with `tools/render/render.sh <id>` (Blender as a Python module, see [tools/render/README.md](tools/render/README.md)). A table without pictures, or `-Damade.pinball.drawn=true`, shows the drawn view instead.
 
 ## Structure
 
 - `domain`: the machine and its rules, without user interface or time of their own. `TableFile` and `TableSpec` (the table files), `Part`, `Path` (paths of walls and ramps), `Table` (builds the playfield from the parts: walls, flippers, bumpers, slingshots, targets, holes, spinners, ramps, tracks, magnets, layers; the plunger, ball serve and kick-outs), `Game` (players, balls, ball save, tilt, bonus, ball search), `Rules` (scoring, modes and stacking, lock and multiball, jackpots, combos, skill shot, extra ball, wizard mode, the lamps), `Progress` (one player's state), `Robot` (plays the attract mode and the tests), `Input`, `Message`, `Sfx`.
 - `repository`: `PinballSettings` (graphics, sound, keys, last table and players).
-- `ui.game`: the running game on the loop thread. `PinballGame` (loop, controls, scenes: title with the robot, play, pause, game over), `TableArt` (bakes the table picture and its raised parts once), `TableView` (tilts it into perspective on a background thread and draws the moving parts, lamps and balls on it), `Art` (the drawings of the parts), `Backglass` (art, scores, the two dot-matrix windows, the modes), `Displays` (what the dot-matrix windows show), `Cards`, `SoundBank`, `Music` (the tunes, in MML), `Arena` (what the presenter may ask of the game).
+- `ui.game`: the running game on the loop thread. `PinballGame` (loop, controls, scenes: title with the robot, play, pause, game over), `TableArt` (bakes the table picture and its raised parts once), `RenderedView` (draws a frame from the pictures rendered in Blender: lamps, flippers, drop targets, plunger, and chrome balls that mirror the table), `TableView` (the drawn view: tilts the baked picture into perspective on a background thread and draws the moving parts, lamps and balls on it), `Art` (the drawings of the parts), `Backglass` (art, scores, the two dot-matrix windows, the modes), `Displays` (what the dot-matrix windows show), `Cards`, `SoundBank`, `Music` (the tunes, in MML), `Arena` (what the presenter may ask of the game).
 - `ui.main`: Model-View-Presenter for everything around the table: `PinballPresenter`, `PinballView`, `PinballWindow`.
 
 From the engine's `pinball` package: `Playfield` (ball physics with sub-steps, segments and arcs, materials, layers and tracks), `Flipper`, `Plunger`, `Ball`, `Track`, `Zone`, `Disc`, `Tilt`, `Lamps`, `DotMatrix`, `Perspective`, `Relief`, `RampArt`, `ChromeBall`. Also `HighScores`, `Gamepads`, `GameLoop`, `GameCanvas`, `Sound`, `Tune`, `Speech` and `Mixer`, `Keyboard` and `Controls`, `SceneStack`, `FullScreen`.

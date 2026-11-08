@@ -48,7 +48,7 @@ import static eu.amadeos.games.pinball.ui.game.Art.c;
  * <p>Tilting the picture is a few hundred milliseconds of work; it is done once per window size, on a
  * background thread, while the last tilted picture (scaled) stands in.
  */
-final class TableView {
+final class TableView implements View {
     /** Where the playfield lies on the 640 × 400 screen. */
     static final double[] QUAD = Perspective.trapezoid(206, 30, 352, 240, 352);
     private static final ExecutorService WARPER = Executors.newSingleThreadExecutor(r -> {
@@ -86,7 +86,8 @@ final class TableView {
     }
 
     /** Tilts the table picture on the drawing thread, at once: for screenshots and tests. */
-    void synchronous(boolean on) {
+    @Override
+    public void synchronous(boolean on) {
         synchronous = on;
     }
 
@@ -100,7 +101,8 @@ final class TableView {
 
     // --8<-- [start:paint]
     /** Draws the table, in logical coordinates; {@code g}'s transform maps them to the device. */
-    void paint(Graphics2D g, Lamps lamps, int locks, double seconds, double alpha) {
+    @Override
+    public void paint(Graphics2D g, Lamps lamps, int locks, double seconds, double alpha) {
         time += seconds;
         // a paused table makes no steps; then the balls stay where the last step left them
         long steps = table.steps();
