@@ -176,7 +176,7 @@ public final class PinballGame implements Arena {
         lastFrame = now;
         Machine m = shown();
         TableView view = view(m);
-        if (view != null) view.paint(g, m.game.lamps(), m.game.rules().locks(), seconds);
+        if (view != null) view.paint(g, m.game.lamps(), m.game.rules().locks(), seconds, alpha);
     }
 
     public void renderOverlay(Graphics2D g, double alpha) {

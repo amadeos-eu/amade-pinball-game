@@ -32,7 +32,7 @@ public final class Rules {
     }
 
     static final double COMBO_SECONDS = 3;
-    static final double SKILL_SECONDS = 4;
+    static final double SKILL_SECONDS = 5;
 
     private final Game game;
     private final TableSpec spec;
@@ -259,8 +259,10 @@ public final class Rules {
      */
     private void touched(String id) {
         if (!skillArmed) return;
-        skillArmed = false;
         String skill = spec.rule("skill", "-");
+        // a skill shot into the top lanes is judged by the lane itself: the lit one counts
+        if (skill.equals(spec.rule("lanes", "-")) && id.startsWith(skill)) return;
+        skillArmed = false;
         if (skill.endsWith("*") ? id.startsWith(skill.substring(0, skill.length() - 1)) : id.equals(skill)) skill();
     }
     // --8<-- [end:skill]
