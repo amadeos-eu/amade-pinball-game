@@ -11,7 +11,9 @@ import eu.amadeos.games.pinball.domain.Part;
 import eu.amadeos.games.pinball.domain.Table;
 import eu.amadeos.games.pinball.domain.TableSpec;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
+import java.awt.Composite;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
@@ -29,6 +31,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,6 +61,12 @@ final class TableView {
     private final TableArt art;
     private final Perspective view = new Perspective(Table.WIDTH, Table.LENGTH, QUAD);
     private final ChromeBall chrome;
+    /** Where each ball was drawn in the last frame, for its trail. */
+    private final Map<Ball, double[]> drawn = new IdentityHashMap<>();
+    private static final int TRAIL = 3;
+    private double alpha = 1;
+    private long seenSteps = -1;
+    private double idle;
     private final Color[] p;
     private volatile Warped warped;
     private volatile boolean warping;
@@ -90,8 +100,13 @@ final class TableView {
 
     // --8<-- [start:paint]
     /** Draws the table, in logical coordinates; {@code g}'s transform maps them to the device. */
-    void paint(Graphics2D g, Lamps lamps, int locks, double seconds) {
+    void paint(Graphics2D g, Lamps lamps, int locks, double seconds, double alpha) {
         time += seconds;
+        // a paused table makes no steps; then the balls stay where the last step left them
+        long steps = table.steps();
+        idle = steps == seenSteps ? idle + seconds : 0;
+        seenSteps = steps;
+        this.alpha = idle > 0.05 ? 1 : alpha;
         Art.FAST.set(true);
         try {
             paintTable(g, lamps, locks);
@@ -112,6 +127,13 @@ final class TableView {
         below.sort(Comparator.comparingDouble(Drawable::depth));
         for (Drawable d : below) d.draw().accept(g);
         if (w != null) image(g, w.upper(), w, t);
+        // balls under the ramps and plastics show through them, faintly, so the eye never loses them
+        Composite plain = g.getComposite();
+        g.setComposite(AlphaComposite.SrcOver.derive(0.45f));
+        for (Ball b : table.field().balls()) {
+            if (b.state != Ball.State.LOST && b.state != Ball.State.ON_TRACK && b.layer == 0) sphere(g, b, 0);
+        }
+        g.setComposite(plain);
         lampGlow(g, lamps, 1);
         above.sort(Comparator.comparingDouble(Drawable::depth));
         for (Drawable d : above) d.draw().accept(g);
@@ -196,6 +218,7 @@ final class TableView {
             boolean high = b.state == Ball.State.ON_TRACK || b.layer > 0;
             (high ? above : below).add(new Drawable(b.y + 0.5, g -> ball(g, b, h)));
         }
+        drawn.keySet().retainAll(field.balls());
         below.add(new Drawable(Table.LANE_Y + 6, this::plunger));
     }
 
@@ -211,16 +234,48 @@ final class TableView {
     // --8<-- [start:ball]
     /** A ball: its shadow on the floor below it, then the chrome sphere, smaller further up the table. */
     private void ball(Graphics2D g, Ball b, double h) {
+        double[] at = at(b, h);
+        double x = at[0], y = at[1];
+        h = at[2];
         double r = b.radius;
-        double s = view.scale(b.x, b.y);
+        double s = view.scale(x, y);
         double floorH = b.state == Ball.State.ON_TRACK ? h : table.field().layerHeight(b.layer);
-        Point2D.Double shadowAt = view.view(b.x + (h - floorH) * 0.35 + 1.2, b.y + (h - floorH) * 0.6 - floorH + 1.5);
+        Point2D.Double shadowAt = view.view(x + (h - floorH) * 0.35 + 1.2, y + (h - floorH) * 0.6 - floorH + 1.5);
         g.setPaint(new RadialGradientPaint(shadowAt, (float) (r * s * 1.1), new float[]{0f, 1f},
                 new Color[]{c(0x000000, 150), c(0x000000, 0)}));
         g.fill(new Ellipse2D.Double(shadowAt.x - r * s * 1.1, shadowAt.y - r * s * 0.8, r * s * 2.2, r * s * 1.6));
-        Point2D.Double centre = view.view(b.x, b.y - h - r * 0.9);
+        // a fast ball leaves a faint trail back to where the last frame showed it, as the eye sees it
+        double[] last = drawn.put(b, at);
+        double gap = last == null ? 0 : Math.hypot(x - last[0], y - last[1]);
+        if (gap > r && gap < 60) {
+            Composite plain = g.getComposite();
+            for (int i = 1; i <= TRAIL; i++) {
+                double f = (double) i / (TRAIL + 1);
+                g.setComposite(AlphaComposite.SrcOver.derive((float) (0.4 * f)));
+                chromeAt(g, last[0] + (x - last[0]) * f, last[1] + (y - last[1]) * f, last[2] + (h - last[2]) * f, r);
+            }
+            g.setComposite(plain);
+        }
+        chromeAt(g, x, y, h, r);
+    }
+
+    /** The ball's place in this frame: between the last two steps of the rules, by how far the frame lies between them. */
+    private double[] at(Ball b, double h) {
+        double[] was = table.before(b);
+        if (was == null || Math.hypot(b.x - was[0], b.y - was[1]) > 30) return new double[]{b.x, b.y, h};
+        return new double[]{was[0] + (b.x - was[0]) * alpha, was[1] + (b.y - was[1]) * alpha, was[2] + (h - was[2]) * alpha};
+    }
+
+    private void chromeAt(Graphics2D g, double x, double y, double h, double r) {
+        Point2D.Double centre = view.view(x, y - h - r * 0.9);
         double scaleX = Math.hypot(g.getTransform().getScaleX(), g.getTransform().getShearY());
-        chrome.draw(g, centre.x, centre.y, r * s * scaleX);
+        chrome.draw(g, centre.x, centre.y, r * view.scale(x, y) * scaleX);
+    }
+
+    /** The chrome sphere alone, at the place this frame shows the ball. */
+    private void sphere(Graphics2D g, Ball b, double h) {
+        double[] at = at(b, h);
+        chromeAt(g, at[0], at[1], at[2], b.radius);
     }
     // --8<-- [end:ball]
 

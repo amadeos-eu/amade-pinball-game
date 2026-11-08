@@ -12,6 +12,7 @@ import eu.amadeos.gameengine.pinball.Zone;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,12 @@ public final class Table {
     public static final double LANE_Y = 341;
     /** A ramp climbs this high before its wire form carries the ball back down. */
     public static final double RAMP_HEIGHT = 30;
+    /**
+     * How fast the table's time runs against the clock. A real ball crosses the table in a fraction of a second,
+     * faster than the eye can follow on a screen at 60 frames; at four fifths it still feels quick, but each frame
+     * shows the ball nearer to where it was. The paths do not change, only how fast they are followed.
+     */
+    public static final double PACE = 0.8;
 
     private final TableSpec spec;
     private final Playfield field = new Playfield(WIDTH, 386, Playfield.STANDARD_GRAVITY, 8, 2400);
@@ -48,6 +55,8 @@ public final class Table {
     private final List<double[]> pending = new ArrayList<>();
     private final List<Runnable> pendingActions = new ArrayList<>();
     private final Map<Ball, Double> grabbed = new HashMap<>();
+    private final Map<Ball, double[]> before = new IdentityHashMap<>();
+    private long steps;
     private Ball captive;
     private boolean kickbackLit;
     private double time;
@@ -59,6 +68,16 @@ public final class Table {
 
     public TableSpec spec() {
         return spec;
+    }
+
+    /** How many steps the table has made, so a view can tell a paused table from a running one. */
+    public long steps() {
+        return steps;
+    }
+
+    /** Where the ball was before the last step: x, y and height; null for a ball that came since. */
+    public double[] before(Ball ball) {
+        return before.get(ball);
     }
 
     public Playfield field() {
@@ -419,7 +438,10 @@ public final class Table {
     /** Moves the table on by {@code seconds}. */
     public void step(double seconds) {
         time += seconds;
-        field.step(seconds);
+        steps++;
+        before.clear();
+        for (Ball b : field.balls()) before.put(b, new double[]{b.x, b.y, b.height(field)});
+        field.step(seconds * PACE);
         for (double[] s : spinners.values()) {
             s[0] += s[1] * seconds;
             s[1] *= Math.max(0, 1 - 1.2 * seconds);

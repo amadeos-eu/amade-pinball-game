@@ -62,18 +62,27 @@ class TablesTest {
     }
     // --8<-- [end:robot]
 
-    /** Somewhere between a weak and a full plunge lies the skill shot. */
+    /**
+     * Somewhere between a weak and a full plunge lies the skill shot. Where the target is a lit top lane, the
+     * player first moves the lit lane with the flipper buttons, as at the machine.
+     */
     @ParameterizedTest
     @MethodSource("tables")
     void somePlungeMakesTheSkillShot(String id) {
         boolean made = false;
-        for (double hold = 0.58; hold <= 0.75 && !made; hold += 0.005) {
-            Table table = new Table(TableFile.load(id));
-            Game game = new Game(table, new Random(1));
-            game.start(1);
-            for (double t = 0; t < 4 && !made; t += 1 / 120.0) {
-                game.step(1 / 120.0, new Input(false, false, t < hold, 0, false, false));
-                made = game.sounds().contains(Sfx.SKILL_SHOT);
+        for (int moves = 0; moves < 4 && !made; moves++) {
+            for (double hold = 0.58; hold <= 0.75 && !made; hold += 0.005) {
+                Table table = new Table(TableFile.load(id));
+                Game game = new Game(table, new Random(1));
+                game.start(1);
+                for (int i = 0; i < moves; i++) {
+                    game.step(1 / 120.0, new Input(false, true, false, 0, false, false));
+                    game.step(1 / 120.0, new Input(false, false, false, 0, false, false));
+                }
+                for (double t = 0; t < 6 && !made; t += 1 / 120.0) {
+                    game.step(1 / 120.0, new Input(false, false, t < hold, 0, false, false));
+                    made = game.sounds().contains(Sfx.SKILL_SHOT);
+                }
             }
         }
         assertTrue(made);

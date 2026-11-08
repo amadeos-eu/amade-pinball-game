@@ -10,8 +10,8 @@ plungertip 217 347 231 347
 gate 216 114 231 106 0 -1
 
 # inlane guides, their rubber posts and the slingshots
-wall 18 262 18 318 70 348
-wall 200 262 200 318 150 348
+wall 18 262 18 318 70 344
+wall 200 262 200 318 150 344
 post 18 262
 post 200 262
 sling slingL 36 270 36 304 62 322
