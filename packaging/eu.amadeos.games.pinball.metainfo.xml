@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- AppStream metadata of amade-pinball-game, installed as /usr/share/metainfo/eu.amadeos.games.pinball.metainfo.xml.
+     amadeOS Software shows it for the installed package; a repository's appstream-generator reads it too. -->
+<component type="desktop-application">
+  <id>eu.amadeos.games.pinball</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>EUPL-1.2</project_license>
+
+  <name>amadeOS Pinball</name>
+
+  <summary>Three pinball tables seen in perspective, with ramps, toys, modes and a wizard mode each</summary>
+  <summary xml:lang="de">Drei Flippertische in Perspektive, mit Rampen, Spielzeugen, Modi und je einem Wizard-Modus</summary>
+  <summary xml:lang="fr">Trois tables de flipper en perspective, avec rampes, jouets, modes et un mode wizard chacune</summary>
+  <summary xml:lang="es">Tres mesas de pinball en perspectiva, con rampas, juguetes, modos y un modo wizard cada una</summary>
+  <summary xml:lang="it">Tre tavoli da flipper in prospettiva, con rampe, giocattoli, modalità e una modalità wizard ciascuno</summary>
+
+  <description>
+    <p>The pinball machine of the amadeOS desktop: three original tables, each seen from the player's end, with a chrome ball that rolls, bounces and spins by real physics. Shoot the ramps and orbits, lock three balls for the multiball, start the table's eight modes at the start hole and finish them all for its wizard mode. The dot-matrix display tells what is running.</p>
+    <p xml:lang="de">Der Flipper des amadeOS-Desktops: drei eigene Tische, jeder vom Spielerende aus gesehen, mit einer Chromkugel, die nach echter Physik rollt, springt und sich dreht. Treffen Sie die Rampen und Orbits, fangen Sie drei Kugeln für den Multiball, starten Sie die acht Modi des Tisches am Startloch und schaffen Sie alle für seinen Wizard-Modus. Die Punktmatrix-Anzeige zeigt, was gerade läuft.</p>
+    <p xml:lang="fr">Le flipper du bureau amadeOS : trois tables originales, chacune vue du côté du joueur, avec une bille chromée qui roule, rebondit et tourne selon une vraie physique. Visez les rampes et les orbites, bloquez trois billes pour le multibille, lancez les huit modes de la table au trou de départ et terminez-les tous pour son mode wizard. L'afficheur à points indique ce qui est en cours.</p>
+    <p xml:lang="es">El pinball del escritorio amadeOS: tres mesas originales, cada una vista desde el lado del jugador, con una bola cromada que rueda, rebota y gira con física real. Acierte las rampas y órbitas, atrape tres bolas para la multibola, inicie los ocho modos de la mesa en el agujero de inicio y complételos todos para su modo wizard. La pantalla de puntos muestra lo que está en marcha.</p>
+    <p xml:lang="it">Il flipper del desktop amadeOS: tre tavoli originali, ciascuno visto dal lato del giocatore, con una pallina cromata che rotola, rimbalza e gira secondo una vera fisica. Colpisci le rampe e le orbite, blocca tre palline per il multiball, avvia le otto modalità del tavolo alla buca di partenza e completale tutte per la sua modalità wizard. Il display a punti mostra cosa è in corso.</p>
+    <ul>
+      <li>Lantern Fair (easy): a fairground at night with a turning Ferris wheel</li>
+      <li xml:lang="de">Lantern Fair (leicht): ein Jahrmarkt bei Nacht mit einem drehenden Riesenrad</li>
+      <li xml:lang="fr">Lantern Fair (facile) : une fête foraine la nuit avec une grande roue qui tourne</li>
+      <li xml:lang="es">Lantern Fair (fácil): una feria de noche con una noria que gira</li>
+      <li xml:lang="it">Lantern Fair (facile): un luna park di notte con una ruota panoramica che gira</li>
+      <li>Coral Deep (medium): a wreck on a reef, a mini playfield in its hold, a kraken and a whirlpool magnet</li>
+      <li xml:lang="de">Coral Deep (mittel): ein Wrack am Riff, ein Mini-Spielfeld in seinem Laderaum, ein Krake und ein Strudelmagnet</li>
+      <li xml:lang="fr">Coral Deep (moyen) : une épave sur un récif, un mini-plateau dans sa cale, un kraken et un aimant tourbillon</li>
+      <li xml:lang="es">Coral Deep (medio): un pecio en un arrecife, un minicampo en su bodega, un kraken y un imán remolino</li>
+      <li xml:lang="it">Coral Deep (medio): un relitto sulla barriera, un mini campo nella stiva, un kraken e un magnete vortice</li>
+      <li>Orbit Yard (hard): a dockyard in orbit with crossing ramps, an upper playfield and a spin disc</li>
+      <li xml:lang="de">Orbit Yard (schwer): eine Werft im Orbit mit sich kreuzenden Rampen, einem oberen Spielfeld und einer Drehscheibe</li>
+      <li xml:lang="fr">Orbit Yard (difficile) : un chantier en orbite avec des rampes croisées, un plateau supérieur et un disque tournant</li>
+      <li xml:lang="es">Orbit Yard (difícil): un astillero en órbita con rampas cruzadas, un campo superior y un disco giratorio</li>
+      <li xml:lang="it">Orbit Yard (difficile): un cantiere in orbita con rampe incrociate, un campo superiore e un disco rotante</li>
+      <li>One to four players take turns; high scores for each table</li>
+      <li xml:lang="de">Ein bis vier Spieler abwechselnd; Bestenliste für jeden Tisch</li>
+      <li xml:lang="fr">De un à quatre joueurs à tour de rôle ; meilleurs scores pour chaque table</li>
+      <li xml:lang="es">De uno a cuatro jugadores por turnos; récords para cada mesa</li>
+      <li xml:lang="it">Da uno a quattro giocatori a turno; record per ogni tavolo</li>
+      <li>Left and right Shift for the flippers, a plunger with a spring, nudging and tilt; or a gamepad</li>
+      <li xml:lang="de">Linke und rechte Umschalttaste für die Flipper, ein Abschussbolzen mit Feder, Rütteln und Tilt; oder ein Gamepad</li>
+      <li xml:lang="fr">Maj gauche et droite pour les flippers, un lanceur à ressort, secouer et tilt ; ou une manette</li>
+      <li xml:lang="es">Mayús izquierda y derecha para los flippers, un lanzador con muelle, sacudir y tilt; o un mando</li>
+      <li xml:lang="it">Maiusc sinistro e destro per i flipper, un lanciatore a molla, scuotere e tilt; o un gamepad</li>
+      <li>Built on amade-game-engine; plays on other operating systems as well</li>
+      <li xml:lang="de">Gebaut auf amade-game-engine; läuft auch auf anderen Betriebssystemen</li>
+      <li xml:lang="fr">Construit sur amade-game-engine ; fonctionne aussi sur d'autres systèmes d'exploitation</li>
+      <li xml:lang="es">Hecho con amade-game-engine; funciona también en otros sistemas operativos</li>
+      <li xml:lang="it">Costruito su amade-game-engine; funziona anche su altri sistemi operativi</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">amade-pinball-game.desktop</launchable>
+  <icon type="stock">amade-pinball-game</icon>
+  <categories>
+    <category>Game</category>
+    <category>ArcadeGame</category>
+  </categories>
+
+  <url type="homepage">https://github.com/amadeos-eu/amade-pinball-game</url>
+  <url type="bugtracker">https://github.com/amadeos-eu/amade-pinball-game/issues</url>
+  <developer id="eu.amadeos">
+    <name>amadeOS Project</name>
+  </developer>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>Lantern Fair, a fairground at night</caption>
+      <caption xml:lang="de">Lantern Fair, ein Jahrmarkt bei Nacht</caption>
+      <caption xml:lang="fr">Lantern Fair, une fête foraine la nuit</caption>
+      <caption xml:lang="es">Lantern Fair, una feria de noche</caption>
+      <caption xml:lang="it">Lantern Fair, un luna park di notte</caption>
+      <image>https://raw.githubusercontent.com/amadeos-eu/amade-pinball-game/main/docs/screenshots/amade-pinball-game.png</image>
+    </screenshot>
+  </screenshots>
+
+  <provides>
+    <binary>amade-pinball-game</binary>
+  </provides>
+  <content_rating type="oars-1.1"/>
+</component>

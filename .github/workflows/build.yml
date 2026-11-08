@@ -1,0 +1,184 @@
+name: Build
+
+# develop builds X.Y.Z-dev.N, release X.Y.Z-pre.N and main the release X.Y.Z, which the release job
+# tags and publishes with the package (see CONTRIBUTING.md of amadeos-eu/amadeos, "Commits and versions").
+on:
+  push:
+    branches: [develop, release, main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      channel: ${{ steps.version.outputs.channel }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The version is computed from the history since the last release tag.
+          fetch-depth: 0
+      - id: version
+        uses: amadeos-eu/amadeos-ci/version@main
+        with:
+          metainfo: packaging/eu.amadeos.games.pinball.metainfo.xml
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          # Plain actions/cache instead of the proprietary enhanced cache that is the v6 default.
+          cache-provider: basic
+      # The Swing integration tests skip themselves without a display, so run under Xvfb.
+      - name: Test
+        run: xvfb-run --auto-servernum ./gradlew test --no-daemon
+      - name: Check that the tests ran
+        run: |
+          count=$(grep -ho 'tests="[0-9]*"' build/test-results/test/*.xml | grep -o '[0-9]*' | paste -sd+ | bc)
+          skipped=$(grep -ho 'skipped="[0-9]*"' build/test-results/test/*.xml | grep -o '[0-9]*' | paste -sd+ | bc)
+          echo "Tests run: $count, skipped: $skipped"
+          test "$count" -ge 40
+          test "$skipped" -eq 0
+      - name: Package
+        run: ./gradlew jar deb --no-daemon -PappVersion=${{ steps.version.outputs.version }}
+      - name: Check the fat jar and the package
+        run: |
+          jar=$(ls build/libs/amade-pinball-game-*.jar)
+          unzip -l "$jar" icons/amade-pinball-game.png
+          unzip -p "$jar" META-INF/MANIFEST.MF | grep -q 'Main-Class: eu.amadeos.games.pinball'
+          deb=$(ls build/distributions/amade-pinball-game_*_all.deb)
+          dpkg-deb --info "$deb"
+          dpkg-deb --contents "$deb" > contents.txt
+          for f in opt/amade-pinball-game/amade-pinball-game.jar usr/bin/amade-pinball-game \
+                   usr/share/applications/amade-pinball-game.desktop \
+                   usr/share/icons/hicolor/48x48/apps/amade-pinball-game.png usr/share/doc/amade-pinball-game/copyright; do
+            grep -q "$f" contents.txt || { echo "missing in the package: $f"; exit 1; }
+          done
+      - name: Upload the Debian package
+        uses: actions/upload-artifact@v7
+        with:
+          name: amade-pinball-game-deb
+          path: build/distributions/*.deb
+          if-no-files-found: error
+      - name: Check the package version
+        run: |
+          deb=$(ls build/distributions/amade-pinball-game_*_all.deb)
+          test "$(dpkg-deb --field "$deb" Version)" = "${{ steps.version.outputs.deb-version }}"
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: build/reports/tests/test
+
+  windows:
+    # The installers carry the version of the Linux build.
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+      # jpackage needs the WiX Toolset for MSI; CI installs WiX 3 (JDK 25 also takes WiX 4/5).
+      - name: Install WiX Toolset 3
+        shell: pwsh
+        run: |
+          if (-not (Get-Command candle.exe -ErrorAction SilentlyContinue)) {
+            $bin = Get-ChildItem 'C:\Program Files (x86)\WiX Toolset v3*\bin' -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $bin) {
+              choco install wixtoolset --no-progress -y
+              $bin = Get-ChildItem 'C:\Program Files (x86)\WiX Toolset v3*\bin' -Directory | Select-Object -First 1
+            }
+            $bin.FullName | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+          }
+      # Not required yet: the tests have only been run on Linux so far. Make this step required
+      # (remove continue-on-error) once it passes.
+      - name: Test on Windows
+        id: windows-tests
+        continue-on-error: true
+        run: ./gradlew test --no-daemon
+      # Failing Windows tests as annotations, visible on the pull request without opening the log.
+      - name: Report failing Windows tests
+        if: steps.windows-tests.outcome == 'failure'
+        shell: pwsh
+        run: |
+          Get-ChildItem build/test-results/test/*.xml | ForEach-Object {
+            [xml]$x = Get-Content $_.FullName
+            foreach ($case in $x.testsuite.testcase) {
+              if ($case.failure) {
+                $msg = ($case.failure.message -replace "`r?`n", ' ')
+                if ($msg.Length -gt 300) { $msg = $msg.Substring(0, 300) }
+                Write-Output "::warning title=Windows test failed::$($case.classname).$($case.name): $msg"
+              }
+            }
+          }
+      # The -P argument is quoted because PowerShell splits 1.0.0-dev.N at the first dot.
+      - name: Build the MSI
+        run: ./gradlew windowsInstaller --no-daemon "-PappVersion=${{ needs.test.outputs.version }}"
+      - name: Build the portable app image
+        run: ./gradlew windowsInstaller -PinstallerType=app-image --no-daemon "-PappVersion=${{ needs.test.outputs.version }}"
+      - name: Check and pack the results
+        shell: pwsh
+        run: |
+          $msi = Get-ChildItem build/windows/msi/*.msi
+          if ($msi.Count -ne 1) { throw "Expected one MSI, found $($msi.Count)" }
+          if ($msi.Length -lt 30MB) { throw "MSI is too small to contain a Java runtime: $($msi.Length) bytes" }
+          if (-not (Test-Path build/windows/app-image/amade-pinball-game/amade-pinball-game.exe)) { throw 'amade-pinball-game.exe missing' }
+          Compress-Archive -Path build/windows/app-image/amade-pinball-game -DestinationPath build/windows/amade-pinball-game-portable.zip
+          Write-Host "MSI: $($msi.Name), $([math]::Round($msi.Length / 1MB)) MB"
+      - name: Upload the Windows packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: amade-pinball-game-windows
+          path: |
+            build/windows/msi/*.msi
+            build/windows/amade-pinball-game-portable.zip
+          if-no-files-found: error
+      - name: Upload test reports
+        if: failure() || steps.windows-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports-windows
+          path: build/reports/tests/test
+
+  # Only on main, after the release branch was promoted: tag vX.Y.Z and publish the GitHub Release.
+  release:
+    needs: [test, windows]
+    if: needs.test.outputs.channel == 'release'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v8
+        with:
+          name: amade-pinball-game-deb
+          path: dist
+      - uses: actions/download-artifact@v8
+        with:
+          name: amade-pinball-game-windows
+          path: dist
+      - uses: amadeos-eu/amadeos-ci/release@main
+        with:
+          version: ${{ needs.test.outputs.version }}
+          files: dist/*.deb dist/msi/*.msi dist/*.zip
+
+  commits:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: amadeos-eu/amadeos-ci/check-commits@main

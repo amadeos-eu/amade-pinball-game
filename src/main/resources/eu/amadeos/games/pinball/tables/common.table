@@ -1,0 +1,43 @@
+# The cabinet and the lower playfield that every table shares. Table units: 232 wide, 392 long,
+# x to the right, y down the table towards the player. Read before each table's own file.
+
+# the wooden side walls with their rounded top corners
+rim path 0 392 L 0 64 C 0 20 30 0 72 0 L 160 0 C 202 0 232 20 232 64 L 232 392
+
+# the shooter lane on the right: its wall, the plunger's tip and the gate the ball cannot come back through
+wall 216 120 216 392
+plungertip 217 347 231 347
+gate 216 114 231 106 0 -1
+
+# inlane guides, their rubber posts and the slingshots
+wall 18 262 18 318 70 348
+wall 200 262 200 318 150 348
+post 18 262
+post 200 262
+sling slingL 36 270 36 304 62 322
+sling slingR 184 270 184 304 158 322
+
+# the two main flippers
+flipper flipL left 72 349 31 28
+flipper flipR right 148 349 31 28
+
+# rollovers in the inlanes and outlanes
+rollover outL 9 284
+rollover inL 26 284
+rollover inR 193 284
+rollover outR 208 284
+
+# plastics over the inlane guides, the lamps of the lower playfield
+plastic p6 p5 11 9 18 286 18 318 64 344
+plastic p6 p5 11 9 200 286 200 318 156 344
+insert outL 9 300 0 p6
+insert inL 26 300 0 p5
+insert inR 193 300 0 p5
+insert outR 208 300 0 p6
+round mult2 86 318 3.2 p5
+round mult3 98 318 3.2 p5
+round mult4 110 318 3.2 p5
+round mult5 122 318 3.2 p5
+round mult6 134 318 3.2 p5
+round again 110 362 5 p6
+label AGAIN 110 363.5 x000000 2.6
