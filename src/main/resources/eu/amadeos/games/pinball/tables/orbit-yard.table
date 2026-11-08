@@ -54,13 +54,15 @@ band 78 172 82 186
 band 130 172 126 186
 label HANGAR 104 144 p7 3.6
 
-# upper flippers on both guides, the beacon standups, a slingshot, the docking clamps
-flipper upL left 27 214 22 24
-flipper upR right 191 214 22 24
-standup beacon1 40 168 75 p7
-standup beacon2 43 178 75 p7
-standup beacon3 46 188 75 p7
-sling slingS 163 201 163 220 176 224
+# upper flippers on both guides, high enough that balls coming down the sides land on them from above and
+# can be shot back up across the table; the beacon standups above the left one, a slingshot below the
+# right one (clear of its tip), the docking clamps
+flipper upL left 26 202 20 30
+flipper upR right 192 196 20 30
+standup beacon1 40 160 75 p7
+standup beacon2 43 170 75 p7
+standup beacon3 46 180 75 p7
+sling slingS 156 214 156 232 168 236
 band 92 88 104 82 116 88
 kickback kick 9 340 r=5
 
