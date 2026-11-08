@@ -1,24 +1,29 @@
-# Coral Deep: a wreck on a reef. Medium: five flippers, two of them in the Wreck Hold, a Kraken that
-# swallows balls, a pearl on a captive ball, a whirlpool that grabs the ball and flings it.
+# Coral Deep: a wreck on a reef. Medium: five flippers, two of them in the Wreck Hold, a Kraken behind
+# its anchor chain that swallows balls, a pearl on a captive ball, a whirlpool that grabs the ball.
+# Every shot lies on a line from a main flipper: the orbits at 30 degrees across, the Sub Tube and the
+# Kraken from the right flipper, the chest and the Anchor ramp from the left one, the pearl straight up.
 name Coral_Deep
 level 2
 art reef
 palette 0c4a64 061a2c a8e0e8 ffd040 f4fff8 3ae0c8 ff7a5a ffd040
 
-# left orbit; the gate only lets the ball go up
-wall 36 246 22 228 22 146
-gate 2 136 21 144 0 -1
-switch orbitL 11 170 r=5
-# right orbit with a spinner
-wall 182 246 196 228 196 140
-gate 215 128 197 136 0 -1
-spinner spinR 206 186 0
-switch orbitR 206 156 r=5
+# left orbit: a lane up the left side from y 150; the gate only lets the ball go up
+wall 24 152 24 138
+gate 2 126 23 134 0 -1
+switch orbitL 12 144 r=5
+# right orbit with a spinner at its mouth
+wall 192 152 192 142
+gate 215 128 193 136 0 -1
+spinner spinR 204 168 0
+switch orbitR 204 140 r=5
 
-# the Kraken, upper left: an arch over its mouth, the lock hole inside
-wall 30 84 32 64 44 56 60 56 72 64 74 84
+# the Kraken, upper left: an arch over its mouth, the lock hole inside, the anchor chain's drops across it
+wall 30 92 32 64 44 58 52 52 60 58 72 64 74 92
 saucer kraken 52 80 p6 out=90 kick=380
 toy kraken 52 78
+drop chain1 42 98 0 p7
+drop chain2 52 98 0 p7
+drop chain3 62 98 0 p7
 
 # the Wreck Hold: a raised floor, upper right, with its own flippers, targets and bumper
 floor 1 128 22 72 76 10 x6a4a2a x2a1a10
@@ -35,57 +40,54 @@ hole@1 holddrain 164 98 6 exit=holdexit
 track holdexit exit=0 164 99 10 164 110 6 158 130 0
 label@1 WRECK_HOLD 164 96 p7 3.8
 
-# jellyfish bumpers
-bumper pop1 70 140 10 xff7aa8 xfff0f8
-bumper pop2 96 126 10 x7ae8ff xf0ffff
-bumper pop3 90 156 10 xc89aff xf8f0ff
-bumper pop4 46 172 7 xffa040 xfff4e0
+# jellyfish bumpers between the Kraken and the hold, where balls coming over the top fall
+bumper pop1 92 40 9 xff7aa8 xfff0f8
+bumper pop2 120 50 9 x7ae8ff xf0ffff
+bumper pop3 98 72 9 xc89aff xf8f0ff
 
 # the pearl: a captive ball in the centre lane that knocks the pearl target behind it
-wall 116 128 116 176
-wall 132 128 132 176
-standup pearl 124 123 0 p7
-captive pearl-ball 124 140 117 125 131 150
-saucer chest 124 190 p7 out=80 kick=360
+wall 96 128 96 176
+wall 112 128 112 176
+standup pearl 104 123 24 p7
+captive pearl-ball 104 140 97 125 111 150
+saucer chest 126 196 p7 out=80 kick=360
 
 # the whirlpool: a magnet under the floor
-magnet whirl 104 214 16 pull=70
-switch whirlpool 104 214 r=5
-label WHIRLPOOL 104 234 x7ae8ff 3.6
+magnet whirl 104 222 14 pull=70
+switch whirlpool 104 222 r=5
+label WHIRLPOOL 104 240 x7ae8ff 3.6
 
-# the upper left flipper, the treasure standups on the right, the anchor chain drops
-flipper upL left 27 212 22 26
-standup treasure1 186 186 90 p7
-standup treasure2 186 198 90 p7
-standup treasure3 186 210 90 p7
-drop chain1 166 200 45 p7
-drop chain2 172 207 45 p7
-drop chain3 178 214 45 p7
-band 142 150 164 164
+# the upper left flipper under the Kraken: balls coming down the left side land on it from above
+wall 0 168 10 216
+flipper upL left 14 222 20 30
+# the treasure standups on the right wall, facing the left flipper
+standup treasure1 186 204 110 p7
+standup treasure2 183 216 110 p7
+standup treasure3 180 228 110 p7
 
 # the Sub Tube from the left up into the Wreck Hold, the Anchor ramp with its long wire back to the left
-tube subtube p5 11 exit=1 path 60 198 C 50 150 40 120 70 108 C 100 96 112 70 134 60
-ramp anchor p6 11 path 156 182 C 160 140 170 120 206 112 wire C 214 60 120 110 60 106 C 14 110 12 160 14 230 L 26 300
+tube subtube p5 11 exit=1 path 70 196 C 66 150 74 120 96 104 C 112 94 124 72 136 60
+ramp anchor p6 11 path 148 184 C 152 140 168 120 206 112 wire C 214 60 120 110 60 106 C 14 110 12 160 14 230 L 26 300
 
-plastic p5 p7 12 10 22 200 22 150
-plasticoval p7 p6 13 104 112 34 14
+plastic p5 p7 12 10 24 152 24 138
+plasticoval p7 p6 13 87 112 34 14
 
-fan orbitL 36 290 -20
-fan subtube 60 262 -14
-fan chest 124 246 0
-fan anchor 152 262 14
-fan orbitR 178 290 24
-modering 90 262 14
-round extra 70 300 3 x4ad87a
-label EXTRA 70 309 x80a8b0 3.2
-round jackpot 140 300 3 p6
-label JACKPOT 140 309 x80a8b0 3.2
-round lock 52 100 3 p6
-label KRAKEN_LOCK 52 128 p6 3.8
-label SUB_TUBE 60 194 xffffff 3.6
-label ANCHOR 156 178 xffffff 3.6
+fan orbitL 68 236 -30
+fan subtube 84 228 -21
+fan chest 117 220 12
+fan anchor 134 226 20
+fan orbitR 152 236 30
+modering 110 270 14
+round extra 80 304 3 x4ad87a
+label EXTRA 80 313 x80a8b0 3.2
+round jackpot 140 304 3 p6
+label JACKPOT 140 313 x80a8b0 3.2
+round lock 52 108 3 p6
+label KRAKEN_LOCK 52 116 p6 3.4
+label SUB_TUBE 70 204 xffffff 3.6
+label ANCHOR 148 192 xffffff 3.6
 
-rules start=chest lock=kraken lock-light=subtube,anchor lock-needs=2 jackpot=subtube,anchor,orbitL,orbitR super=kraken combos=subtube,anchor,orbitL,orbitR extra=chest skill=treasure* bank=chain standups=treasure,hold magnet=whirl
+rules start=chest lock=kraken lock-light=subtube,anchor lock-needs=2 jackpot=subtube,anchor,orbitL,orbitR super=kraken combos=subtube,anchor,orbitL,orbitR extra=chest skill=pop2 bank=chain standups=treasure,hold magnet=whirl
 mode Kraken shots=kraken count=2 time=45 value=75000
 mode Sub_Tube shots=subtube count=3 time=45 value=60000
 mode Anchor shots=anchor count=3 time=40 value=60000

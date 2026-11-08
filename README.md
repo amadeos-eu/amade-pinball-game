@@ -10,14 +10,14 @@
 ## The tables
 
 - **Lantern Fair** (easy): a fairground at night. Coaster and Dipper ramps, a turning Ferris wheel that locks the balls, the carousel pop bumpers under the F·A·I·R lanes, the Fortune Teller start hole, a shooting gallery of drop targets, the Strongman standups and an upper flipper. Wizard mode: Grand Parade, four balls.
-- **Coral Deep** (medium): a wreck on a reef. The Sub Tube carries the ball up into the Wreck Hold, a mini playfield with its own pair of flippers; the Kraken swallows balls for the lock; a pearl sits on a captive ball; the whirlpool magnet grabs the ball and flings it. Wizard mode: Abyss.
+- **Coral Deep** (medium): a wreck on a reef. The Sub Tube carries the ball up into the Wreck Hold, a mini playfield with its own pair of flippers; the Kraken, behind the anchor chain's drop targets, swallows balls for the lock; a pearl sits on a captive ball; the whirlpool magnet grabs the ball and flings it. Wizard mode: Abyss.
 - **Orbit Yard** (hard): a dockyard in orbit. Launch and Re-entry ramps cross over the middle, a lift carries the ball to the Moon Dock upper playfield with its visible lock tube, the satellite spin disc throws the ball, five hangar drop targets guard the start hole, and a kickback saves the left outlane. Wizard mode: Launch Window, five balls.
 
 ## Playing
 
 - On the title the robot plays the chosen table. **Left** and **right** choose the table, **up** and **down** or **1** to **4** the number of players, **Enter** starts. The title remembers both.
 - **Left Shift** and **right Shift** (or **Z** and **-**) work the flippers of their side; the upper flippers move with the lower ones.
-- Hold **Space** or **down** to pull the plunger and let go to shoot: the longer, the harder. The right strength is the skill shot: into the lit top lane on Lantern Fair (the flipper buttons move the lit lane), onto a treasure standup on Coral Deep, into the satellite on Orbit Yard.
+- Hold **Space** or **down** to pull the plunger and let go to shoot: the longer, the harder. The right strength is the skill shot: into the lit top lane on Lantern Fair (the flipper buttons move the lit lane), onto the blue jellyfish bumper on Coral Deep, into the satellite on Orbit Yard.
 - **X**, **.** and **up** nudge the table to the left, to the right and forwards. After three warnings the ball tilts.
 - **Esc** or **P** pauses, and so does leaving the window; **Q** in the pause ends the game. *Game → Choose table* goes back to the title.
 - The rules: the start hole starts the mode its lamp shows; each mode lights its shots for a time. Ramps light the lock; three locked balls start the multiball with jackpots and a super jackpot. Shots in a row are combos, the top lanes raise the bonus multiplier, a ball lost soon after the launch comes back. All eight modes played light the wizard mode.
