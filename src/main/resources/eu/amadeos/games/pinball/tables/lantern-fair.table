@@ -1,4 +1,5 @@
 # Lantern Fair: a fairground at night. Easy: three flippers, two ramps, a Ferris wheel that locks balls.
+# --8<-- [start:top]
 name Lantern_Fair
 level 1
 art fair
@@ -58,6 +59,7 @@ ramp dipper p7 12 path 148 176 C 150 130 130 60 160 40 C 184 26 204 40 204 70 wi
 plastic p5 p6 12 10 22 140 22 112
 plastic p7 p5 12 10 120 56 117 112 130 134
 
+# --8<-- [end:top]
 # inserts: arrows to every shot, the ride ring
 fan orbitL 34 288 -20
 fan coaster 58 262 -10
@@ -74,6 +76,7 @@ label LOCK 80 128 p6 3
 label FORTUNE 104 204 p6 3.6
 label COASTER 58 172 xffffff 3.6
 label DIPPER 148 172 xffffff 3.6
+# --8<-- [start:rules]
 
 # the rules: which hole starts a mode, which locks, what lights the lock and the jackpots
 rules start=fortune lock=ferris lock-light=coaster,dipper lock-needs=2 jackpot=coaster,dipper,orbitL,orbitR super=ferris lanes=fair skill=fair combos=coaster,dipper,orbitL,orbitR extra=fortune bank=gallery standups=strong
@@ -86,3 +89,4 @@ mode Fortune_Teller shots=fortune count=2 time=45 value=75000
 mode Strongman shots=strong* count=6 time=35 value=30000
 mode Hall_of_Mirrors shots=dipper,orbitR count=4 time=40 value=55000
 wizard Grand_Parade shots=coaster,dipper,orbitL,orbitR,fortune,ferris count=12 time=60 value=250000 balls=4
+# --8<-- [end:rules]
