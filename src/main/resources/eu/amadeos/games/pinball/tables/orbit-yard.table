@@ -1,19 +1,21 @@
 # Orbit Yard: a dockyard in orbit. Hard: five flippers, one on the Moon Dock upper playfield, two ramps
 # that cross, a spin disc, a hangar behind five drop targets, a kickback in the left outlane.
+# Every shot lies on a line from a main flipper: the orbits at 30 degrees across, the ramps at 17 to 20,
+# the hangar straight up; the upper flippers sit on the side walls where balls fall onto them from above.
 name Orbit_Yard
 level 3
 art orbit
 palette 0a0c22 02030a 9ab8ff 3ae0ff e8f4ff 3ae0ff ff3ac8 b8ff4a
 
-# the full orbit: guides on both sides, spinners in both lanes; the gates only let the ball go up
-wall 36 246 22 230 22 112
-gate 2 102 21 110 0 -1
-spinner spinL 11 186 0
-switch orbitL 11 140 r=5
-wall 182 246 196 230 196 127
-gate 215 117 197 123 0 -1
-spinner spinR 206 186 0
-switch orbitR 206 140 r=5
+# the full orbit: lanes up both sides from y 150, spinners at their mouths; the gates only let the ball go up
+wall 24 152 24 114
+gate 2 102 23 110 0 -1
+spinner spinL 12 160 0
+switch orbitL 12 128 r=5
+wall 192 152 192 127
+gate 215 117 193 123 0 -1
+spinner spinR 204 160 0
+switch orbitR 204 136 r=5
 
 # the Moon Dock: a raised floor at the top with a flipper, drop targets and the lock tube
 floor 1 58 20 104 44 12 x283050 x101428
@@ -38,7 +40,7 @@ toy satellite 150 118 16
 # the thruster bumpers on the left
 bumper pop1 52 108 8 x3ae0ff x101830
 bumper pop2 74 124 8 xff3ac8 x101830
-bumper pop3 50 134 8 xb8ff4a x101830
+bumper pop3 46 140 8 xb8ff4a x101830
 bumper pop4 78 98 7 x3ae0ff x101830
 
 # the hangar: five drop targets guard its scoop
@@ -50,43 +52,41 @@ drop hangar5 122 170 0 p7
 saucer hangar 104 156 p7 out=90 kick=420
 wall 80 150 80 168
 wall 128 150 128 168
-band 78 172 82 186
-band 130 172 126 186
 label HANGAR 104 144 p7 3.6
 
-# upper flippers on both guides, high enough that balls coming down the sides land on them from above and
-# can be shot back up across the table; the beacon standups above the left one, a slingshot below the
-# right one (clear of its tip), the docking clamps
-flipper upL left 26 202 20 30
-flipper upR right 192 196 20 30
-standup beacon1 40 160 75 p7
-standup beacon2 43 170 75 p7
-standup beacon3 46 180 75 p7
-sling slingS 156 214 156 232 168 236
-band 92 88 104 82 116 88
+# the upper flippers low on both side walls, where balls coming down the sides land on them from above;
+# the beacon standups above the left one take the right flipper's steep shots, the docking clamps
+wall 0 168 10 216
+flipper upL left 14 222 20 30
+wall 216 168 206 216
+flipper upR right 202 222 20 30
+standup beacon1 30 178 70 p7
+standup beacon2 33 190 70 p7
+standup beacon3 36 202 70 p7
+band 96 86 104 82 112 86
 kickback kick 9 340 r=5
 
 # the crossing ramps: Launch from the left over to the right, Re-entry from the right over to the left
-ramp launch p7 11 path 66 190 C 80 140 120 110 170 88 C 194 76 206 96 206 130 wire C 207 200 204 250 193 300
-ramp reentry p6 11 path 144 192 C 128 140 92 108 46 90 C 20 80 12 100 12 130 wire C 11 200 14 250 26 300
+ramp launch p7 12 path 68 184 C 78 140 120 110 170 88 C 194 76 206 96 206 130 wire C 207 200 204 250 193 300
+ramp reentry p6 12 path 146 184 C 128 140 92 108 46 90 C 20 80 12 100 12 130 wire C 11 200 14 250 26 300
 
-plastic p5 p6 12 10 22 140 22 112
-plastic p6 p5 12 10 196 150 196 112
+plastic p5 p6 12 10 24 150 24 116
+plastic p6 p5 12 10 192 150 192 128
 
-fan orbitL 34 292 -22
-fan launch 62 264 -16
-fan hangar 104 236 0
-fan reentry 146 264 16
-fan orbitR 176 292 22
-modering 104 268 14
+fan orbitL 68 236 -30
+fan launch 86 226 -20
+fan hangar 110 222 0
+fan reentry 130 226 17
+fan orbitR 152 236 30
+modering 110 270 14
 round extra 80 304 3 x4ad87a
 label EXTRA 80 313 x8090c0 3.2
-round jackpot 128 304 3 p6
-label JACKPOT 128 313 x8090c0 3.2
+round jackpot 140 304 3 p6
+label JACKPOT 140 313 x8090c0 3.2
 round lock 104 190 3 p6
 round kickback 9 352 3 p7
-label LAUNCH 66 186 xffffff 3.6
-label RE-ENTRY 144 188 xffffff 3.6
+label LAUNCH 68 190 xffffff 3.6
+label RE-ENTRY 146 190 xffffff 3.6
 
 rules start=hangar lock=moonlock lift=lift lock-light=launch,reentry lock-needs=2 jackpot=launch,reentry,orbitL,orbitR super=moonlock combos=launch,reentry,orbitL,orbitR extra=hangar skill=satellite bank=hangar,dock standups=beacon kickback=kick
 mode Launch shots=launch count=3 time=40 value=70000

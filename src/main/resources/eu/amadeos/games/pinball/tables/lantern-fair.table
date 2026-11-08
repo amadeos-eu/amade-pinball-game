@@ -1,88 +1,85 @@
 # Lantern Fair: a fairground at night. Easy: three flippers, two ramps, a Ferris wheel that locks balls.
+# Every shot lies on a line from a main flipper: the orbits at 30 degrees across, the ramps at 5 to 20,
+# the Fortune Teller straight up, the Ferris wheel through the gap left of it.
 # --8<-- [start:top]
 name Lantern_Fair
 level 1
 art fair
 palette 2c1450 120a28 c8b8e8 ff4a5a fff4e0 ffb43c ff5a8c 4ad8b0
 
-# left orbit "Tunnel of Love" with its spinner; the gate only lets the ball go up
-wall 36 246 22 228 22 112
-gate 2 102 21 110 0 -1
-spinner spinL 11 176 0
-switch orbitL 11 128 r=5
-# right orbit, past the gallery
-wall 182 246 196 228 196 127
-gate 215 117 197 123 0 -1
-switch orbitR 206 140 r=5
+# left orbit "Tunnel of Love": a lane up the left side from y 150, the spinner at its mouth; the gate at
+# the top only lets the ball go up, so a ball coming across the top falls into the lanes
+wall 24 152 24 72
+gate 2 56 23 70 0 -1
+spinner spinL 12 160 0
+switch orbitL 12 110 r=5
+# right orbit, past the gallery; also the way the plunged ball goes up
+wall 192 152 192 127
+gate 215 117 193 123 0 -1
+switch orbitR 204 140 r=5
 
 # F A I R top lanes over the carousel pop bumpers
-lanes fair 120 30 4 17 F A I R
-wall 120 54 116 112 132 136
-bumper pop1 146 82 10 p3 xfff4e0
-bumper pop2 174 80 10 x4ad8b0 xfff4e0
-bumper pop3 160 106 10 p5 xfff4e0
-bumper pop4 186 142 7 p7 xfff4e0
+lanes fair 118 24 4 17 F A I R
+wall 114 50 114 96
+bumper pop1 140 70 10 p3 xfff4e0
+bumper pop2 172 64 10 x4ad8b0 xfff4e0
+bumper pop3 156 98 10 p5 xfff4e0
 
-# the Ferris wheel: its base and the lock hole under it
-wall 63 98 80 89 97 98
-saucer ferris 80 104 p6 out=100 kick=360
-toy ferris 80 92 26
+# the Ferris wheel: its base and the lock hole under it, straight up the gap left of the Fortune Teller
+wall 58 104 74 96 90 104
+saucer ferris 74 110 p6 out=100 kick=360
+toy ferris 74 96 24
 
-# Fortune Teller scoop between the ramps, with rubbers either side
-saucer fortune 104 190 p6 out=95 kick=340
-band 88 172 90 198
-band 120 172 118 198
+# the Fortune Teller scoop behind the shooting gallery's three drop targets
+wall 96 128 96 152
+wall 124 128 124 152
+saucer fortune 110 140 p6 out=90 kick=380
+drop gallery1 101 160 0 xffd27a
+drop gallery2 110 160 0 xff6a6a
+drop gallery3 119 160 0 xffd27a
 
-# Strongman standups on the left, the shooting gallery drops on the right
-standup strong1 31 192 90 p5
-standup strong2 31 204 90 p5
-standup strong3 31 216 90 p5
-drop gallery1 190 150 90 xffd27a
-drop gallery2 190 163 90 xff6a6a
-drop gallery3 190 176 90 xffd27a
-drop gallery4 190 189 90 xff6a6a
+# Strongman standups on the left wall, facing the right flipper
+standup strong1 30 204 70 p5
+standup strong2 33 216 70 p5
+standup strong3 36 228 70 p5
 
-# Hall of Mirrors: the upper flipper on the right
-flipper upR right 187 212 21 30
-
-# a rubber post group
-band 40 120 46 140 40 160
-post 44 138
-post 128 150
+# Hall of Mirrors: the upper flipper on the right, under the pops; balls coming down from them land on it
+wall 216 168 206 216
+flipper upR right 202 222 20 30
 
 # the Coaster ramp left of centre, its wire back to the left inlane
-ramp coaster p6 12 path 58 176 C 50 130 44 80 56 44 C 62 28 80 22 96 30 wire C 70 14 34 30 32 80 C 30 150 30 230 26 300
-# the Big Dipper ramp over the pops, its wire down the right to the right inlane
-ramp dipper p7 12 path 148 176 C 150 130 130 60 160 40 C 184 26 204 40 204 70 wire C 206 140 206 220 193 300
+ramp coaster p6 12 path 66 184 C 62 140 58 100 50 70 C 44 44 30 36 22 52 wire C 14 80 12 140 14 200 C 16 250 22 280 26 300
+# the Big Dipper ramp right of centre, over the pops, its wire down the right to the right inlane
+ramp dipper p7 12 path 146 184 C 148 140 152 104 176 86 C 196 72 208 92 206 124 wire C 206 170 204 230 193 300
 
-# plastics over the orbit guide and the pocket wall
-plastic p5 p6 12 10 22 140 22 112
-plastic p7 p5 12 10 120 56 117 112 130 134
+# plastics over the orbit guides
+plastic p5 p6 12 10 24 150 24 112
+plastic p6 p5 12 10 192 150 192 128
 
 # --8<-- [end:top]
-# inserts: arrows to every shot, the ride ring
-fan orbitL 34 288 -20
-fan coaster 58 262 -10
-fan fortune 104 228 0
-fan dipper 144 262 12
-fan orbitR 178 288 22
-modering 104 258 15
-round extra 80 300 3 x4ad87a
-label EXTRA 80 309 x8a80b0 3.2
-round jackpot 128 300 3 p6
-label JACKPOT 128 309 x8a80b0 3.2
-round lock 80 120 3 p6
-label LOCK 80 128 p6 3
-label FORTUNE 104 204 p6 3.6
-label COASTER 58 172 xffffff 3.6
-label DIPPER 148 172 xffffff 3.6
+# inserts: arrows to every shot along its line, the ride ring
+fan orbitL 68 236 -30
+fan coaster 86 226 -20
+fan fortune 110 222 0
+fan dipper 130 226 17
+fan orbitR 152 236 30
+modering 110 270 15
+round extra 80 304 3 x4ad87a
+label EXTRA 80 313 x8a80b0 3.2
+round jackpot 140 304 3 p6
+label JACKPOT 140 313 x8a80b0 3.2
+round lock 74 124 3 p6
+label LOCK 74 132 p6 3
+label FORTUNE 110 190 p6 3.6
+label COASTER 66 190 xffffff 3.6
+label DIPPER 146 190 xffffff 3.6
 # --8<-- [start:rules]
 
 # the rules: which hole starts a mode, which locks, what lights the lock and the jackpots
 rules start=fortune lock=ferris lock-light=coaster,dipper lock-needs=2 jackpot=coaster,dipper,orbitL,orbitR super=ferris lanes=fair skill=fair combos=coaster,dipper,orbitL,orbitR extra=fortune bank=gallery standups=strong
 mode Ferris_Wheel shots=ferris,coaster count=3 time=45 value=60000
 mode Carousel shots=pop* count=20 time=30 value=6000
-mode Shooting_Gallery shots=gallery* count=4 time=40 value=40000
+mode Shooting_Gallery shots=gallery* count=3 time=40 value=40000
 mode Coaster shots=coaster count=3 time=40 value=60000
 mode Tunnel_of_Love shots=orbitL count=3 time=40 value=50000
 mode Fortune_Teller shots=fortune count=2 time=45 value=75000
