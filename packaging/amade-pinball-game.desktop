@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=amadeOS Pinball
+GenericName=Pinball Game
+GenericName[de]=Flipperspiel
+GenericName[fr]=Jeu de flipper
+GenericName[es]=Juego de pinball
+GenericName[it]=Gioco di flipper
+Comment=Three pinball tables seen in perspective, with ramps, toys, modes and a wizard mode each
+Comment[de]=Drei Flippertische in Perspektive, mit Rampen, Spielzeugen, Modi und je einem Wizard-Modus
+Comment[fr]=Trois tables de flipper en perspective, avec rampes, jouets, modes et un mode wizard chacune
+Comment[es]=Tres mesas de pinball en perspectiva, con rampas, juguetes, modos y un modo wizard cada una
+Comment[it]=Tre tavoli da flipper in prospettiva, con rampe, giocattoli, modalità e una modalità wizard ciascuno
+Icon=amade-pinball-game
+Exec=/usr/bin/amade-pinball-game
+Terminal=false
+Categories=Game;ArcadeGame;
+Keywords=pinball;flipper;ball;table;multiball;arcade;gamepad;game;
+StartupNotify=true

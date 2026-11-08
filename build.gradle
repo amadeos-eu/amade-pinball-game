@@ -1,0 +1,240 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'eu.amadeos'
+// CI computes the version from the Conventional Commits since the last release tag and passes it as
+// -PappVersion (amadeos-eu/amadeos-ci scripts/next-version.sh); a build without it is a local development build.
+version = findProperty('appVersion') ?: '0.0.0-dev.0'
+// Debian sorts 1.1.0~dev.57 before 1.1.0 (with - it would sort after it).
+def debVersion = version.toString().replace('-', '~')
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+application {
+    mainClass = 'eu.amadeos.games.pinball.bootstrap.AmadePinballApplication'
+    // Gamepads on Windows are read through java.lang.foreign; without this, Java warns about it.
+    applicationDefaultJvmArgs = ['--enable-native-access=ALL-UNNAMED']
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // The pinball package (table physics, flippers, ramps, the perspective view, relief drawing, the chrome
+    // ball, the dot-matrix display, lamps, tilt), gamepads, loop, canvas, sound, music and speech, high scores
+    // and the standard game menu; brings amade-commons (theme, Motif look, start-up, XDG).
+    // With ../amade-game-engine checked out, settings.gradle builds that checkout instead (composite build).
+    implementation 'com.github.amadeos-eu:amade-game-engine:e76a149a89'
+    runtimeOnly 'ch.qos.logback:logback-classic:1.5.18'
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
+    // Tests compare English texts, whatever the language of the build machine.
+    systemProperty 'user.language', 'en'
+    systemProperty 'user.country', 'US'
+}
+
+jar {
+    archiveBaseName = 'amade-pinball-game'
+    manifest {
+        attributes(
+            'Main-Class': 'eu.amadeos.games.pinball.bootstrap.AmadePinballApplication',
+            'Implementation-Title': 'amade-pinball-game',
+            'Implementation-Version': project.version,
+            // java -jar: the gamepads on Windows call XInput through java.lang.foreign without a warning.
+            'Enable-Native-Access': 'ALL-UNNAMED'
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    // Signed dependency jars would otherwise invalidate the fat jar.
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register('deb') {
+    dependsOn jar
+    description = 'Builds a standard Debian (.deb) package for amade-pinball-game'
+    group = 'distribution'
+
+    doLast {
+        def buildDirFile = layout.buildDirectory.get().asFile
+        def stagingDir = new File(buildDirFile, 'deb-staging')
+        delete(stagingDir)
+
+        def optDir = new File(stagingDir, 'opt/amade-pinball-game')
+        def binDir = new File(stagingDir, 'usr/bin')
+        def appDir = new File(stagingDir, 'usr/share/applications')
+        def iconDir = new File(stagingDir, 'usr/share/icons/hicolor/48x48/apps')
+        def docDir = new File(stagingDir, 'usr/share/doc/amade-pinball-game')
+        def debianDir = new File(stagingDir, 'DEBIAN')
+        def distDir = new File(buildDirFile, 'distributions')
+        [optDir, binDir, appDir, iconDir, docDir, debianDir, distDir]*.mkdirs()
+
+        copy {
+            from jar.archiveFile
+            into optDir
+            rename { 'amade-pinball-game.jar' }
+        }
+
+        def launcher = new File(binDir, 'amade-pinball-game')
+        launcher.text = """#!/bin/sh
+exec /usr/bin/java -jar /opt/amade-pinball-game/amade-pinball-game.jar "\$@"
+"""
+        launcher.setExecutable(true, false)
+
+        copy {
+            from 'packaging/amade-pinball-game.desktop'
+            into appDir
+        }
+        // AppStream metadata: name, description and screenshot for amadeOS Software (and a repository's
+        // appstream-generator).
+        copy {
+            from 'packaging/eu.amadeos.games.pinball.metainfo.xml'
+            into new File(stagingDir, "usr/share/metainfo")
+        }
+        copy {
+            from 'src/main/resources/icons/amade-pinball-game.png'
+            into iconDir
+        }
+        copy {
+            from 'LICENSE'
+            into docDir
+            rename { 'copyright' }
+        }
+
+        new File(debianDir, 'control').text = """Package: amade-pinball-game
+Version: ${debVersion}
+Section: games
+Priority: optional
+Architecture: all
+Depends: openjdk-25-jre | java-runtime (>= 25)
+Maintainer: amadeOS Project <developers@datazuul.com>
+Description: Pinball game for amadeOS with three tables
+ Three original pinball tables seen in perspective: Lantern Fair, a
+ fairground at night; Coral Deep, a wreck on a reef with a mini playfield;
+ and Orbit Yard, a dockyard in orbit with crossing ramps. Each table has
+ ramps, toys, a ball lock and multiball, eight modes and a wizard mode,
+ shown on a dot-matrix display. One to four players take turns.
+ Keyboard or gamepad. Part of the amadeOS games.
+"""
+
+        def debFile = new File(distDir, "amade-pinball-game_${debVersion}_all.deb")
+        def process = new ProcessBuilder('dpkg-deb', '--root-owner-group', '--build',
+                stagingDir.absolutePath, debFile.absolutePath)
+                .redirectErrorStream(true)
+                .start()
+        process.inputStream.eachLine { println it }
+        if (process.waitFor() != 0) {
+            throw new GradleException('dpkg-deb failed')
+        }
+        println "[deb] Created ${debFile.absolutePath}"
+    }
+}
+
+tasks.register('installToAmadeOs') {
+    dependsOn 'deb'
+    description = 'Builds and drops the .deb package into ../amadeos/config/packages.chroot/'
+    group = 'distribution'
+
+    doLast {
+        def targetDir = file('../amadeos/config/packages.chroot')
+        targetDir.mkdirs()
+        def debFile = new File(layout.buildDirectory.get().asFile, "distributions/amade-pinball-game_${debVersion}_all.deb")
+        copy {
+            from debFile
+            into targetDir
+        }
+        println "[installToAmadeOs] Copied ${debFile.name} to ${targetDir.absolutePath}"
+    }
+}
+
+// Windows installer with jpackage: the fat jar plus a Java runtime, so Windows users need no Java.
+// jpackage builds Windows packages only on Windows; MSI and EXE also need WiX Toolset 3 on the PATH.
+//   ./gradlew windowsInstaller                           (MSI; output in build/windows/<type>/)
+//   ./gradlew windowsInstaller -PinstallerType=exe       (setup .exe)
+//   ./gradlew windowsInstaller -PinstallerType=app-image (folder with amade-pinball-game.exe, no WiX needed)
+tasks.register('windowsInstaller') {
+    dependsOn jar
+    description = 'Builds a Windows installer (MSI, EXE or app image) with jpackage'
+    group = 'distribution'
+
+    def jdk = javaToolchains.launcherFor { languageVersion = java.toolchain.languageVersion }
+    doLast {
+        if (!System.getProperty('os.name').startsWith('Windows')) {
+            throw new GradleException('jpackage builds Windows packages only on Windows')
+        }
+        def type = project.findProperty('installerType') ?: 'msi'
+        def buildDirFile = layout.buildDirectory.get().asFile
+        // jpackage bundles everything in --input, so give it a folder with just the fat jar.
+        def inputDir = new File(buildDirFile, 'jpackage-input')
+        def destDir = new File(buildDirFile, "windows/$type")
+        delete(inputDir, destDir)
+        copy {
+            from jar.archiveFile
+            into inputDir
+        }
+
+        def jpackage = jdk.get().metadata.installationPath.file('bin/jpackage.exe').asFile
+        def args = [jpackage.absolutePath,
+                    '--type', type,
+                    '--name', 'amade-pinball-game',
+                    // MSI versions are numeric only: 0.1.0-SNAPSHOT becomes 0.1.0
+                    '--app-version', project.version.toString().replaceAll(/[^0-9.].*$/, ''),
+                    '--vendor', 'datazuul',
+                    '--description', 'Pinball with three tables, seen in perspective',
+                    '--copyright', 'datazuul, licensed under the EUPL-1.2',
+                    '--input', inputDir.absolutePath,
+                    '--main-jar', jar.archiveFile.get().asFile.name,
+                    '--main-class', application.mainClass.get(),
+                    '--java-options', '--enable-native-access=ALL-UNNAMED',
+                    '--icon', file('packaging/windows/amade-pinball-game.ico').absolutePath,
+                    '--dest', destDir.absolutePath]
+        if (type != 'app-image') {
+            args += ['--win-menu', '--win-menu-group', 'amadeOS Games', '--win-shortcut', '--win-dir-chooser',
+                     '--license-file', file('LICENSE').absolutePath,
+                     // Never change: lets a newer installer replace an installed version.
+                     '--win-upgrade-uuid', 'e520e12e-7dab-4bcf-bdee-b5dbca7ff326']
+        }
+
+        def process = new ProcessBuilder(args).redirectErrorStream(true).start()
+        process.inputStream.eachLine { println it }
+        if (process.waitFor() != 0) {
+            throw new GradleException('jpackage failed')
+        }
+        destDir.eachFile { println "[windowsInstaller] Created ${it.absolutePath}" }
+    }
+}
+
+// How long the frames of each table take: ./gradlew benchmark (needs a display; xvfb-run on servers)
+tasks.register('benchmark', JavaExec) {
+    description = 'Measures the frame times of the tables'
+    group = 'verification'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'eu.amadeos.games.pinball.ui.game.Benchmark'
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
+}
+
+// The screenshots of chapter 70, drawn without a screen: ./gradlew screenshots -Pshots=<folder>
+tasks.register('screenshots', JavaExec) {
+    description = 'Draws the screenshots of the handbook chapter'
+    group = 'documentation'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'eu.amadeos.games.pinball.ui.game.Screenshots'
+    args = [project.findProperty('shots') ?: layout.buildDirectory.dir('screenshots').get().asFile.path]
+}
+
