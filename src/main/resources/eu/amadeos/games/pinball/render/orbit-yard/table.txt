@@ -1,63 +1,63 @@
 # made by passes.py: the rendered layers of the table orbit-yard
-size 412 400
+size 1236 1200
 world 0.0022 232.0 392.0
-matrix 4.565961837768555 0.0 0.0 -1.1652334928512573 0.0 3.173466682434082 3.470844030380249 -1.03652822971344 0.0 0.7381632328033447 -0.6749184131622314 1.1641056537628174 0.0 0.7380157113075256 -0.6747835278511047 1.3638529777526855
+matrix 4.565962314605713 0.0 0.0 -1.1652336120605469 0.0 3.1734671592712402 3.470844268798828 -1.0365283489227295 0.0 0.7381632328033447 -0.6749184131622314 1.1641056537628174 0.0 0.7380157113075256 -0.6747835278511047 1.3638529777526855
 eye 0.25519999861717224 -0.8578225374221802 1.0829641819000244
 basis 1.0 0.0 0.0 0.0 0.6747835278511047 0.7380157113075256 0.0 -0.7380157113075256 0.6747835278511047
-lamp again 50 55
-lamp extra 32 23
-lamp hangar1 29 74
-lamp hangar2 29 72
-lamp hangar3 35 72
-lamp inL 29 61
-lamp inR 243 95
-lamp jackpot 24 41
-lamp kickback 27 240
-lamp launch1 30 63
-lamp launch2 22 75
-lamp launch3 39 50
-lamp lock 22 72
-lamp mode0 21 40
-lamp mode1 24 73
-lamp mode2 24 67
-lamp mode3 22 72
-lamp mode4 22 52
-lamp mode5 26 74
-lamp mode6 25 72
-lamp mode7 25 59
-lamp mult2 21 55
-lamp mult3 73 49
-lamp mult4 21 118
-lamp mult5 22 55
-lamp mult6 26 95
-lamp orbitL1 32 98
-lamp orbitL2 29 46
-lamp orbitL3 32 45
-lamp orbitR1 25 40
-lamp orbitR2 27 40
-lamp orbitR3 22 51
-lamp outL 27 93
-lamp outR 292 40
-lamp pop1 52 39
-lamp pop2 47 1
-lamp pop3 55 39
-lamp pop4 47 36
-lamp reentry1 26 72
-lamp reentry2 29 39
-lamp reentry3 23 73
-lamp wizard 23 39
-flipper dockF 3 170 33 0.2618 -0.6458
-flipper flipL 3 72 246 0.4887 -0.4189
-flipper flipR 3 189 246 2.6529 3.5605
-flipper upL 3 29 144 0.5236 -0.384
-flipper upR 3 271 144 2.618 3.5256
-drop dock1 208 17
-drop dock2 219 17
-drop dock3 229 17
-drop hangar1 155 120
-drop hangar2 166 120
-drop hangar3 177 120
-drop hangar4 188 120
-drop hangar5 199 120
-plunger 3 346 281 12.0
+lamp again 202 220
+lamp extra 103 169
+lamp hangar1 70 147
+lamp hangar2 66 166
+lamp hangar3 79 173
+lamp inL 76 290
+lamp inR 612 147
+lamp jackpot 67 69
+lamp kickback 85 564
+lamp launch1 78 167
+lamp launch2 78 166
+lamp launch3 107 114
+lamp lock 112 142
+lamp mode0 64 142
+lamp mode1 65 173
+lamp mode2 64 140
+lamp mode3 74 150
+lamp mode4 65 167
+lamp mode5 74 146
+lamp mode6 78 171
+lamp mode7 67 145
+lamp mult2 64 158
+lamp mult3 64 220
+lamp mult4 65 145
+lamp mult5 64 145
+lamp mult6 190 154
+lamp orbitL1 103 167
+lamp orbitL2 101 128
+lamp orbitL3 106 174
+lamp orbitR1 65 147
+lamp orbitR2 64 68
+lamp orbitR3 74 69
+lamp outL 92 116
+lamp outR 549 112
+lamp pop1 166 116
+lamp pop2 161 6
+lamp pop3 140 68
+lamp pop4 167 116
+lamp reentry1 66 163
+lamp reentry2 72 174
+lamp reentry3 65 215
+lamp wizard 64 155
+flipper dockF 12 518 109 0.2618 -0.6458
+flipper flipL 12 226 748 0.4887 -0.4189
+flipper flipR 12 575 748 2.6529 3.5605
+flipper upL 12 96 440 0.5236 -0.384
+flipper upR 12 821 440 2.618 3.5256
+drop dock1 633 61
+drop dock2 665 61
+drop dock3 697 61
+drop hangar1 474 369
+drop hangar2 507 369
+drop hangar3 540 369
+drop hangar4 573 369
+drop hangar5 606 369
+plunger 8 1048 853 12.0
 probes 6 10 64 32 16 200 30 350

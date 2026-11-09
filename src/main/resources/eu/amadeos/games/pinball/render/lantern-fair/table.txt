@@ -1,58 +1,58 @@
 # made by passes.py: the rendered layers of the table lantern-fair
-size 412 400
+size 1236 1200
 world 0.0022 232.0 392.0
-matrix 4.565961837768555 0.0 0.0 -1.1652334928512573 0.0 3.173466682434082 3.470844030380249 -1.03652822971344 0.0 0.7381632328033447 -0.6749184131622314 1.1641056537628174 0.0 0.7380157113075256 -0.6747835278511047 1.3638529777526855
+matrix 4.565962314605713 0.0 0.0 -1.1652336120605469 0.0 3.1734671592712402 3.470844268798828 -1.0365283489227295 0.0 0.7381632328033447 -0.6749184131622314 1.1641056537628174 0.0 0.7380157113075256 -0.6747835278511047 1.3638529777526855
 eye 0.25519999861717224 -0.8578225374221802 1.0829641819000244
 basis 1.0 0.0 0.0 0.0 0.6747835278511047 0.7380157113075256 0.0 -0.7380157113075256 0.6747835278511047
-lamp again 128 129
-lamp coaster1 22 51
-lamp coaster2 30 47
-lamp coaster3 22 39
-lamp dipper1 22 51
-lamp dipper2 33 45
-lamp dipper3 23 40
-lamp extra 30 53
-lamp fair1 68 0
-lamp fair2 57 0
-lamp fair3 110 0
-lamp fair4 95 1
-lamp fortune1 22 47
-lamp fortune2 30 42
-lamp fortune3 33 67
-lamp inL 30 41
-lamp inR 282 119
-lamp jackpot 22 59
-lamp lock 46 15
-lamp mode0 22 37
-lamp mode1 23 48
-lamp mode2 21 45
-lamp mode3 76 45
-lamp mode4 22 174
-lamp mode5 26 56
-lamp mode6 23 64
-lamp mode7 23 37
-lamp mult2 22 106
-lamp mult3 26 43
-lamp mult4 22 77
-lamp mult5 70 208
-lamp mult6 121 41
-lamp orbitL1 30 93
-lamp orbitL2 40 31
-lamp orbitL3 32 53
-lamp orbitR1 31 79
-lamp orbitR2 25 45
-lamp orbitR3 28 50
-lamp outL 30 71
-lamp outR 295 133
-lamp pop1 40 1
-lamp pop2 61 0
-lamp pop3 60 7
-lamp wizard 21 120
-flipper flipL 3 72 246 0.4887 -0.4189
-flipper flipR 3 189 246 2.6529 3.5605
-flipper upR 3 271 144 2.618 3.5256
-drop gallery1 174 113
-drop gallery2 185 113
-drop gallery3 195 113
-plunger 3 346 281 12.0
+lamp again 340 47
+lamp coaster1 108 111
+lamp coaster2 105 158
+lamp coaster3 111 55
+lamp dipper1 77 189
+lamp dipper2 78 201
+lamp dipper3 71 136
+lamp extra 247 185
+lamp fair1 252 4
+lamp fair2 264 4
+lamp fair3 298 4
+lamp fair4 210 4
+lamp fortune1 66 136
+lamp fortune2 93 108
+lamp fortune3 103 151
+lamp inL 86 61
+lamp inR 847 305
+lamp jackpot 289 136
+lamp lock 144 47
+lamp mode0 67 136
+lamp mode1 66 136
+lamp mode2 72 136
+lamp mode3 66 59
+lamp mode4 65 108
+lamp mode5 85 271
+lamp mode6 90 47
+lamp mode7 72 140
+lamp mult2 64 47
+lamp mult3 77 47
+lamp mult4 66 137
+lamp mult5 260 136
+lamp mult6 252 147
+lamp orbitL1 110 182
+lamp orbitL2 106 47
+lamp orbitL3 109 47
+lamp orbitR1 66 124
+lamp orbitR2 79 116
+lamp orbitR3 79 108
+lamp outL 92 58
+lamp outR 831 359
+lamp pop1 136 4
+lamp pop2 138 5
+lamp pop3 77 4
+lamp wizard 65 136
+flipper flipL 12 226 748 0.4887 -0.4189
+flipper flipR 12 575 748 2.6529 3.5605
+flipper upR 12 821 440 2.618 3.5256
+drop gallery1 530 347
+drop gallery2 563 347
+drop gallery3 595 347
+plunger 8 1048 853 12.0
 probes 6 10 64 32 16 200 30 350

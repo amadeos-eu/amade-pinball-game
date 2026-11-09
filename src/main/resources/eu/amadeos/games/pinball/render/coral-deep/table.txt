@@ -1,57 +1,57 @@
 # made by passes.py: the rendered layers of the table coral-deep
-size 412 400
+size 1236 1200
 world 0.0022 232.0 392.0
-matrix 4.565961837768555 0.0 0.0 -1.1652334928512573 0.0 3.173466682434082 3.470844030380249 -1.03652822971344 0.0 0.7381632328033447 -0.6749184131622314 1.1641056537628174 0.0 0.7380157113075256 -0.6747835278511047 1.3638529777526855
+matrix 4.565962314605713 0.0 0.0 -1.1652336120605469 0.0 3.1734671592712402 3.470844268798828 -1.0365283489227295 0.0 0.7381632328033447 -0.6749184131622314 1.1641056537628174 0.0 0.7380157113075256 -0.6747835278511047 1.3638529777526855
 eye 0.25519999861717224 -0.8578225374221802 1.0829641819000244
 basis 1.0 0.0 0.0 0.0 0.6747835278511047 0.7380157113075256 0.0 -0.7380157113075256 0.6747835278511047
-lamp again 26 64
-lamp anchor1 29 57
-lamp anchor2 24 69
-lamp anchor3 31 49
-lamp chest1 23 95
-lamp chest2 26 70
-lamp chest3 21 67
-lamp extra 28 55
-lamp holdpop 38 2
-lamp inL 29 71
-lamp inR 295 69
-lamp jackpot 22 26
-lamp lock 52 38
-lamp mode0 23 76
-lamp mode1 24 57
-lamp mode2 25 26
-lamp mode3 26 70
-lamp mode4 21 72
-lamp mode5 27 87
-lamp mode6 24 47
-lamp mode7 21 74
-lamp mult2 22 78
-lamp mult3 29 75
-lamp mult4 69 57
-lamp mult5 29 56
-lamp mult6 69 34
-lamp orbitL1 35 55
-lamp orbitL2 35 49
-lamp orbitL3 33 73
-lamp orbitR1 25 75
-lamp orbitR2 28 67
-lamp orbitR3 28 61
-lamp outL 27 103
-lamp outR 260 25
-lamp pop1 43 2
-lamp pop2 33 1
-lamp pop3 45 2
-lamp subtube1 22 76
-lamp subtube2 26 69
-lamp subtube3 23 71
-lamp wizard 24 64
-flipper flipL 3 72 246 0.4887 -0.4189
-flipper flipR 3 189 246 2.6529 3.5605
-flipper holdL 3 209 56 0.4363 -0.4712
-flipper holdR 3 252 56 2.7053 3.6128
-flipper upL 3 29 144 0.5236 -0.384
-drop chain1 108 70
-drop chain2 119 70
-drop chain3 131 70
-plunger 3 346 281 12.0
+lamp again 202 136
+lamp anchor1 65 135
+lamp anchor2 67 101
+lamp anchor3 66 101
+lamp chest1 69 152
+lamp chest2 74 136
+lamp chest3 74 136
+lamp extra 91 101
+lamp holdpop 81 5
+lamp inL 96 215
+lamp inR 646 77
+lamp jackpot 80 136
+lamp lock 152 143
+lamp mode0 78 136
+lamp mode1 77 155
+lamp mode2 68 78
+lamp mode3 65 172
+lamp mode4 64 168
+lamp mode5 80 136
+lamp mode6 87 153
+lamp mode7 78 135
+lamp mult2 65 102
+lamp mult3 68 199
+lamp mult4 204 136
+lamp mult5 68 78
+lamp mult6 269 78
+lamp orbitL1 103 168
+lamp orbitL2 105 198
+lamp orbitL3 107 109
+lamp orbitR1 77 78
+lamp orbitR2 71 102
+lamp orbitR3 65 102
+lamp outL 91 238
+lamp outR 495 77
+lamp pop1 181 5
+lamp pop2 207 5
+lamp pop3 153 5
+lamp subtube1 101 171
+lamp subtube2 77 176
+lamp subtube3 105 194
+lamp wizard 65 136
+flipper flipL 12 226 748 0.4887 -0.4189
+flipper flipR 12 575 748 2.6529 3.5605
+flipper holdL 12 635 176 0.4363 -0.4712
+flipper holdR 12 766 176 2.7053 3.6128
+flipper upL 12 96 440 0.5236 -0.384
+drop chain1 333 219
+drop chain2 367 219
+drop chain3 401 219
+plunger 8 1048 853 12.0
 probes 6 10 64 32 16 200 30 350
