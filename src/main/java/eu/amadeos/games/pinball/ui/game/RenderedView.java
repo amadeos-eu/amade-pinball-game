@@ -237,6 +237,7 @@ final class RenderedView implements View {
         for (int i = 0; i < balls.size(); i++) order.add(i);
         order.sort(Comparator.comparingDouble((Integer i) -> -places.get(i)[3]));
         for (int i : order) chrome(sc, balls.get(i), places.get(i));
+        plunger(sc);
         g.setTransform(new AffineTransform());
         g.drawImage(frame, (int) Math.round(t.getTranslateX()), (int) Math.round(t.getTranslateY()), null);
         g.setTransform(t);
@@ -264,7 +265,7 @@ final class RenderedView implements View {
         }
     }
 
-    /** The drop targets that stand, the flippers at their angles and the plunger at its pull. */
+    /** The drop targets that stand and the flippers at their angles. */
     private void sprites(Scaled sc) {
         Graphics2D g = frame.createGraphics();
         for (Map.Entry<String, Sprite> e : sc.drops().entrySet()) {
@@ -277,10 +278,15 @@ final class RenderedView implements View {
             double raised = Math.max(0, Math.min(1, fl.raised()));
             draw(g, frames[(int) Math.round(raised * (frames.length - 1))]);
         }
-        if (sc.plunger().length > 0) {
-            double pull = Math.max(0, Math.min(1, table.plunger().pull() * 12 / travel));
-            draw(g, sc.plunger()[(int) Math.round(pull * (sc.plunger().length - 1))]);
-        }
+        g.dispose();
+    }
+
+    /** The plunger at its pull: it is nearer the eye than any ball in the shooter lane, so it comes last. */
+    private void plunger(Scaled sc) {
+        if (sc.plunger().length == 0) return;
+        Graphics2D g = frame.createGraphics();
+        double pull = Math.max(0, Math.min(1, table.plunger().pull() * 12 / travel));
+        draw(g, sc.plunger()[(int) Math.round(pull * (sc.plunger().length - 1))]);
         g.dispose();
     }
 

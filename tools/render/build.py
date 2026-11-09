@@ -316,7 +316,8 @@ prism("apronL", [(-4, 370), (84, 370), (98, L + 4), (-4, L + 4)], 0, 6, M_APRON,
 prism("apronR", [(216, 370), (136, 370), (122, L + 4), (216, L + 4)], 0, 6, M_APRON, bevel=1.0)
 # the plunger in the shooter lane: rubber tip, chrome rod, steel spring against the housing; it is drawn in the
 # game from sprites at several pulls, so it is not in the base picture
-LANE_X, TIP_Y, AXIS_H = 224, 346.5, 4.6
+# the rod's axis at the height of the ball's centre, so the tip strikes the ball square
+LANE_X, TIP_Y, AXIS_H = 224, 346.5, 5.5
 prism("plungerHousing", [(LANE_X - 6, 383), (LANE_X + 6, 383), (LANE_X + 6, 388), (LANE_X - 6, 388)], 0, 10, M_RAIL, bevel=0.8)
 CAT = "plunger"
 M_STEEL = mat("steel", (0.75, 0.75, 0.78, 1), metal=1, rough=0.22)

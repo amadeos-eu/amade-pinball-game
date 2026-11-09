@@ -17,7 +17,7 @@
 
 - On the title the robot plays the chosen table. **Left** and **right** choose the table, **up** and **down** or **1** to **4** the number of players, **Enter** starts. The title remembers both.
 - **Left Shift** and **right Shift** (or **Z** and **-**) work the flippers of their side; the upper flippers move with the lower ones.
-- Hold **Space** or **down** to pull the plunger and let go to shoot: the longer, the harder. The right strength is the skill shot: into the lit top lane on Lantern Fair (the flipper buttons move the lit lane), onto the blue jellyfish bumper on Coral Deep, into the satellite on Orbit Yard.
+- Hold **Space** or **down** to pull the plunger and let go to shoot: the longer, the harder. The right strength is the skill shot: into the lit top lane on Lantern Fair (the flipper buttons move the lit lane), onto the pink jellyfish bumper on Coral Deep, into the satellite on Orbit Yard.
 - **X**, **.** and **up** nudge the table to the left, to the right and forwards. After three warnings the ball tilts.
 - **Esc** or **P** pauses, and so does leaving the window; **Q** in the pause ends the game. *Game → Choose table* goes back to the title.
 - The rules: the start hole starts the mode its lamp shows; each mode lights its shots for a time. Ramps light the lock; three locked balls start the multiball with jackpots and a super jackpot. Shots in a row are combos, the top lanes raise the bonus multiplier, a ball lost soon after the launch comes back. All eight modes played light the wizard mode.
