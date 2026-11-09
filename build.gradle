@@ -238,3 +238,13 @@ tasks.register('screenshots', JavaExec) {
     args = [project.findProperty('shots') ?: layout.buildDirectory.dir('screenshots').get().asFile.path]
 }
 
+
+// What Blender needs to render a table (tools/render): ./gradlew renderExport -Ptable=<id> -Pout=<folder>
+tasks.register('renderExport', JavaExec) {
+    description = 'Writes the printed playfield and the parts of a table for the Blender renderer'
+    group = 'documentation'
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'eu.amadeos.games.pinball.ui.game.RenderExport'
+    args = [project.findProperty('table') ?: 'lantern-fair',
+            project.findProperty('out') ?: layout.buildDirectory.dir('render').get().asFile.path]
+}

@@ -1,0 +1,57 @@
+# made by passes.py: the rendered layers of the table coral-deep
+size 1236 1200
+world 0.0022 232.0 392.0
+matrix 4.565962314605713 0.0 0.0 -1.1652336120605469 0.0 3.1734671592712402 3.470844268798828 -1.0365283489227295 0.0 0.7381632328033447 -0.6749184131622314 1.1641056537628174 0.0 0.7380157113075256 -0.6747835278511047 1.3638529777526855
+eye 0.25519999861717224 -0.8578225374221802 1.0829641819000244
+basis 1.0 0.0 0.0 0.0 0.6747835278511047 0.7380157113075256 0.0 -0.7380157113075256 0.6747835278511047
+lamp again 202 136
+lamp anchor1 65 135
+lamp anchor2 67 101
+lamp anchor3 66 101
+lamp chest1 69 152
+lamp chest2 74 136
+lamp chest3 74 136
+lamp extra 91 101
+lamp holdpop 81 5
+lamp inL 96 215
+lamp inR 646 77
+lamp jackpot 80 136
+lamp lock 152 143
+lamp mode0 78 136
+lamp mode1 77 155
+lamp mode2 68 78
+lamp mode3 65 172
+lamp mode4 64 168
+lamp mode5 80 136
+lamp mode6 87 153
+lamp mode7 78 135
+lamp mult2 65 102
+lamp mult3 68 199
+lamp mult4 204 136
+lamp mult5 68 78
+lamp mult6 269 78
+lamp orbitL1 103 168
+lamp orbitL2 105 198
+lamp orbitL3 107 109
+lamp orbitR1 77 78
+lamp orbitR2 71 102
+lamp orbitR3 65 102
+lamp outL 91 238
+lamp outR 495 77
+lamp pop1 181 5
+lamp pop2 207 5
+lamp pop3 153 5
+lamp subtube1 101 171
+lamp subtube2 77 176
+lamp subtube3 105 194
+lamp wizard 65 136
+flipper flipL 12 226 748 0.4887 -0.4189
+flipper flipR 12 575 748 2.6529 3.5605
+flipper holdL 12 635 176 0.4363 -0.4712
+flipper holdR 12 766 176 2.7053 3.6128
+flipper upL 12 96 440 0.5236 -0.384
+drop chain1 333 219
+drop chain2 367 219
+drop chain3 401 219
+plunger 8 1048 853 12.0
+probes 6 10 64 32 16 200 30 350

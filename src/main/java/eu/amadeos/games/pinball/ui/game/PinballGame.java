@@ -68,7 +68,7 @@ public final class PinballGame implements Arena {
         final Table table;
         final Game game;
         final Robot robot;
-        private volatile TableView view;
+        private volatile View view;
         private boolean baking;
 
         Machine(TableSpec spec, long seed) {
@@ -78,7 +78,7 @@ public final class PinballGame implements Arena {
             this.robot = new Robot(new Random(seed + 1));
         }
 
-        TableView view() {
+        View view() {
             return view;
         }
     }
@@ -101,6 +101,8 @@ public final class PinballGame implements Arena {
     private volatile Consumer<Result> onGameOver = result -> { };
     private volatile String tableId;
     private boolean synchronous;
+    /** The tables drawn by hand, not the rendered pictures: -Damade.pinball.drawn=true. */
+    private final boolean drawn = Boolean.getBoolean("amade.pinball.drawn");
     private GameLoop loop;
     private double time;
     private long lastFrame;
@@ -175,7 +177,7 @@ public final class PinballGame implements Arena {
         double seconds = lastFrame == 0 ? 0 : Math.min(0.1, (now - lastFrame) / 1e9);
         lastFrame = now;
         Machine m = shown();
-        TableView view = view(m);
+        View view = view(m);
         if (view != null) view.paint(g, m.game.lamps(), m.game.rules().locks(), seconds, alpha);
     }
 
@@ -186,11 +188,13 @@ public final class PinballGame implements Arena {
     }
 
     /** The table's picture, baked on a background thread the first time it is wanted. */
-    private TableView view(Machine m) {
+    private View view(Machine m) {
         if (m.view == null && !m.baking) {
             m.baking = true;
             Runnable bake = () -> {
-                TableView v = new TableView(m.table, new TableArt(m.table, PIXELS_PER_UNIT));
+                // the pictures Blender rendered, where there are any; else the table drawn by hand
+                View v = RenderedView.load(m.table);
+                if (v == null || drawn) v = new TableView(m.table, new TableArt(m.table, PIXELS_PER_UNIT));
                 v.synchronous(synchronous);
                 m.view = v;
             };
