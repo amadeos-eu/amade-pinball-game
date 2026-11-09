@@ -87,7 +87,7 @@ label KRAKEN_LOCK 52 116 p6 3.4
 label SUB_TUBE 70 204 xffffff 3.6
 label ANCHOR 148 192 xffffff 3.6
 
-rules start=chest lock=kraken lock-light=subtube,anchor lock-needs=2 jackpot=subtube,anchor,orbitL,orbitR super=kraken combos=subtube,anchor,orbitL,orbitR extra=chest skill=pop2 bank=chain standups=treasure,hold magnet=whirl
+rules start=chest lock=kraken lock-light=subtube,anchor lock-needs=2 jackpot=subtube,anchor,orbitL,orbitR super=kraken combos=subtube,anchor,orbitL,orbitR extra=chest skill=pop1 bank=chain standups=treasure,hold magnet=whirl
 mode Kraken shots=kraken count=2 time=45 value=75000
 mode Sub_Tube shots=subtube count=3 time=45 value=60000
 mode Anchor shots=anchor count=3 time=40 value=60000

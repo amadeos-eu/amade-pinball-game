@@ -32,7 +32,7 @@ dependencies {
     // ball, the dot-matrix display, lamps, tilt), gamepads, loop, canvas, sound, music and speech, high scores
     // and the standard game menu; brings amade-commons (theme, Motif look, start-up, XDG).
     // With ../amade-game-engine checked out, settings.gradle builds that checkout instead (composite build).
-    implementation 'com.github.amadeos-eu:amade-game-engine:e76a149a89'
+    implementation 'com.github.amadeos-eu:amade-game-engine:43c27b2b92'
     runtimeOnly 'ch.qos.logback:logback-classic:1.5.18'
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'

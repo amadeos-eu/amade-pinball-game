@@ -170,121 +170,138 @@ def rgba(ch, layer="ViewLayer.Combined"):
     raise KeyError(layer)
 
 
-# ---------------------------------------------------------------- 1. base and the lamps
-vl = scene.view_layers[0]
-vl.use_pass_z = True
-lampgroups = {}
-for k, objs in groups.items():
-    if k.startswith("lamp:"):
-        g = "L_" + "".join(c if c.isalnum() else "_" for c in k[5:])
-        vl.lightgroups.add(name=g)
-        lampgroups[k[5:]] = g
-        for o in objs:
-            o.lightgroup = g
-for o in scene.objects:
-    if o.type == "LIGHT" and str(o.get("group", "")).startswith("lamp:"):
-        o.lightgroup = lampgroups[o["group"][5:]]
-print("lamps:", len(lampgroups), flush=True)
-ch = render_exr(os.path.join(SCRATCH, "main.exr"))
-print(sorted(ch.keys())[:8], flush=True)
-lit_lin = ch["ViewLayer.Combined"][..., :3].astype(np.float32)
-lamp_lin = {name: ch["ViewLayer.Combined_" + g][..., :3].astype(np.float32) for name, g in lampgroups.items() if "ViewLayer.Combined_" + g in ch}
-# ---------------------------------------------------------------- the rest is lit as with every lamp off
-saved = []
-for k, objs in groups.items():
-    if k.startswith("lamp:") and not k[5:].startswith("pop") :
-        for o in objs:
-            for m in o.data.materials:
-                b = m.node_tree.nodes.get("Principled BSDF")
-                if b and b.inputs["Emission Strength"].default_value > 1:
-                    saved.append((b.inputs["Emission Strength"], b.inputs["Emission Strength"].default_value))
-                    b.inputs["Emission Strength"].default_value = 0.1
-for o in scene.objects:
-    if o.type == "LIGHT" and str(o.get("group", "")).startswith("lamp:"):
-        saved.append((o.data, o.data.energy))
-        o.data.energy = 0
-for o in scene.objects:
-    o.lightgroup = ""
-vl.use_pass_z = True
+# ONLY=plunger renders the plunger alone again, against the base picture already rendered
+ONLY = os.environ.get("ONLY", "")
+if ONLY:
+    meta = json.load(open(os.path.join(OUT, "table.json")))
+    base8 = (load_png(os.path.join(OUT, "base.png"))[..., :3] * 255).round()
+    saved = []
+    for k, objs in groups.items():
+        if k.startswith("lamp:") and not k[5:].startswith("pop"):
+            for o in objs:
+                for m in o.data.materials:
+                    b = m.node_tree.nodes.get("Principled BSDF")
+                    if b and b.inputs["Emission Strength"].default_value > 1:
+                        b.inputs["Emission Strength"].default_value = 0.1
+    for o in scene.objects:
+        if o.type == "LIGHT" and str(o.get("group", "")).startswith("lamp:"):
+            o.data.energy = 0
+else:
+    # ---------------------------------------------------------------- 1. base and the lamps
+    vl = scene.view_layers[0]
+    vl.use_pass_z = True
+    lampgroups = {}
+    for k, objs in groups.items():
+        if k.startswith("lamp:"):
+            g = "L_" + "".join(c if c.isalnum() else "_" for c in k[5:])
+            vl.lightgroups.add(name=g)
+            lampgroups[k[5:]] = g
+            for o in objs:
+                o.lightgroup = g
+    for o in scene.objects:
+        if o.type == "LIGHT" and str(o.get("group", "")).startswith("lamp:"):
+            o.lightgroup = lampgroups[o["group"][5:]]
+    print("lamps:", len(lampgroups), flush=True)
+    ch = render_exr(os.path.join(SCRATCH, "main.exr"))
+    print(sorted(ch.keys())[:8], flush=True)
+    lit_lin = ch["ViewLayer.Combined"][..., :3].astype(np.float32)
+    lamp_lin = {name: ch["ViewLayer.Combined_" + g][..., :3].astype(np.float32) for name, g in lampgroups.items() if "ViewLayer.Combined_" + g in ch}
+    # ---------------------------------------------------------------- the rest is lit as with every lamp off
+    saved = []
+    for k, objs in groups.items():
+        if k.startswith("lamp:") and not k[5:].startswith("pop") :
+            for o in objs:
+                for m in o.data.materials:
+                    b = m.node_tree.nodes.get("Principled BSDF")
+                    if b and b.inputs["Emission Strength"].default_value > 1:
+                        saved.append((b.inputs["Emission Strength"], b.inputs["Emission Strength"].default_value))
+                        b.inputs["Emission Strength"].default_value = 0.1
+    for o in scene.objects:
+        if o.type == "LIGHT" and str(o.get("group", "")).startswith("lamp:"):
+            saved.append((o.data, o.data.energy))
+            o.data.energy = 0
+    for o in scene.objects:
+        o.lightgroup = ""
+    vl.use_pass_z = True
 
-ch = render_exr(os.path.join(SCRATCH, "base.exr"))
-base_lin = ch["ViewLayer.Combined"][..., :3].astype(np.float32)
-save_display(base_lin, os.path.join(OUT, "base.png"))
-base8 = (load_png(os.path.join(OUT, "base.png"))[..., :3] * 255).round()
+    ch = render_exr(os.path.join(SCRATCH, "base.exr"))
+    base_lin = ch["ViewLayer.Combined"][..., :3].astype(np.float32)
+    save_display(base_lin, os.path.join(OUT, "base.png"))
+    base8 = (load_png(os.path.join(OUT, "base.png"))[..., :3] * 255).round()
 
 
-def blur(a, k=2):
-    pad = np.pad(a, ((k, k), (k, k), (0, 0)), mode="edge")
-    n = (2 * k + 1) ** 2
-    return sum(pad[k + dy:k + dy + a.shape[0], k + dx:k + dx + a.shape[1]] for dy in range(-k, k + 1) for dx in range(-k, k + 1)) / n
+    def blur(a, k=2):
+        pad = np.pad(a, ((k, k), (k, k), (0, 0)), mode="edge")
+        n = (2 * k + 1) ** 2
+        return sum(pad[k + dy:k + dy + a.shape[0], k + dx:k + dx + a.shape[1]] for dy in range(-k, k + 1) for dx in range(-k, k + 1)) / n
 
 
-# the denoised light of all lamps together, shared out by each lamp's (noisy, so blurred) part of it
-total = np.maximum(lit_lin - base_lin, 0)
-smooth = {n: blur(a) for n, a in lamp_lin.items()}
-whole = sum(smooth.values()) + 1e-6
-for name in lamp_lin:
-    lin = total * (smooth[name] / whole)
-    p = os.path.join(SCRATCH, "l.png")
-    save_display(base_lin + lin, p)
-    lit8 = (load_png(p)[..., :3] * 255).round()
-    diff = np.clip(lit8 - base8, 0, 255)
-    mag = diff.max(axis=2)
-    if mag.max() < 3:
-        continue
-    ys, xs = np.where(mag > max(4.0, mag.max() * 0.06))
-    y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
-    crop = diff[y0:y1, x0:x1]
-    png_write(crop.astype(np.uint8), os.path.join(OUT, "lamp-%s.png" % name))
-    meta["lamps"][name] = [int(x0), int(y0)]
-print("lamp images:", len(meta["lamps"]), flush=True)
-# ---------------------------------------------------------------- 2. depth of the opaque scene
-over = groups.get("over", [])
-for o in over:
-    o.hide_render = True
-scene.cycles.samples = 1
-scene.cycles.use_denoising = False
-ch = render_exr(os.path.join(SCRATCH, "depth.exr"))
-z = ch["ViewLayer.Depth.Z"] if "ViewLayer.Depth.Z" in ch else ch[[n for n in ch if n.endswith("Depth.Z") or n.endswith(".Z")][0]]
-z = np.minimum(z, 60.0)
-z16 = (z * 1000).round().clip(0, 65535).astype(np.uint16)
-import zlib, struct
-def png16(gray, path):
-    h, w = gray.shape
-    raw = b"".join(b"\x00" + gray[r].astype(">u2").tobytes() for r in range(h))
-    def chunk(t, d):
-        return struct.pack(">I", len(d)) + t + d + struct.pack(">I", zlib.crc32(t + d) & 0xffffffff)
-    with open(path, "wb") as f:
-        f.write(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 16, 0, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
-png16(z16, os.path.join(OUT, "depth.png"))
-print("depth range", float(z.min()), float(z.max()), flush=True)
-# the depth of the ramps, wires, plastics and toys alone: in front of a ball they cover it, behind it not
-hidden = [o for o in scene.objects if o.type in ("MESH", "CURVE") and not o.hide_render]
-for o in hidden:
-    o.hide_render = True
-for o in over:
-    o.hide_render = False
-ch = render_exr(os.path.join(SCRATCH, "overdepth.exr"))
-z = ch["ViewLayer.Depth.Z"] if "ViewLayer.Depth.Z" in ch else ch[[n for n in ch if n.endswith(".Z")][0]]
-png16((np.minimum(z, 60.0) * 1000).round().clip(0, 65535).astype(np.uint16), os.path.join(OUT, "overdepth.png"))
-for o in hidden:
-    o.hide_render = False
+    # the denoised light of all lamps together, shared out by each lamp's (noisy, so blurred) part of it
+    total = np.maximum(lit_lin - base_lin, 0)
+    smooth = {n: blur(a) for n, a in lamp_lin.items()}
+    whole = sum(smooth.values()) + 1e-6
+    for name in lamp_lin:
+        lin = total * (smooth[name] / whole)
+        p = os.path.join(SCRATCH, "l.png")
+        save_display(base_lin + lin, p)
+        lit8 = (load_png(p)[..., :3] * 255).round()
+        diff = np.clip(lit8 - base8, 0, 255)
+        mag = diff.max(axis=2)
+        if mag.max() < 3:
+            continue
+        ys, xs = np.where(mag > max(4.0, mag.max() * 0.06))
+        y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+        crop = diff[y0:y1, x0:x1]
+        png_write(crop.astype(np.uint8), os.path.join(OUT, "lamp-%s.png" % name))
+        meta["lamps"][name] = [int(x0), int(y0)]
+    print("lamp images:", len(meta["lamps"]), flush=True)
+    # ---------------------------------------------------------------- 2. depth of the opaque scene
+    over = groups.get("over", [])
+    for o in over:
+        o.hide_render = True
+    scene.cycles.samples = 1
+    scene.cycles.use_denoising = False
+    ch = render_exr(os.path.join(SCRATCH, "depth.exr"))
+    z = ch["ViewLayer.Depth.Z"] if "ViewLayer.Depth.Z" in ch else ch[[n for n in ch if n.endswith("Depth.Z") or n.endswith(".Z")][0]]
+    z = np.minimum(z, 60.0)
+    z16 = (z * 1000).round().clip(0, 65535).astype(np.uint16)
+    import zlib, struct
+    def png16(gray, path):
+        h, w = gray.shape
+        raw = b"".join(b"\x00" + gray[r].astype(">u2").tobytes() for r in range(h))
+        def chunk(t, d):
+            return struct.pack(">I", len(d)) + t + d + struct.pack(">I", zlib.crc32(t + d) & 0xffffffff)
+        with open(path, "wb") as f:
+            f.write(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 16, 0, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
+    png16(z16, os.path.join(OUT, "depth.png"))
+    print("depth range", float(z.min()), float(z.max()), flush=True)
+    # the depth of the ramps, wires, plastics and toys alone: in front of a ball they cover it, behind it not
+    hidden = [o for o in scene.objects if o.type in ("MESH", "CURVE") and not o.hide_render]
+    for o in hidden:
+        o.hide_render = True
+    for o in over:
+        o.hide_render = False
+    ch = render_exr(os.path.join(SCRATCH, "overdepth.exr"))
+    z = ch["ViewLayer.Depth.Z"] if "ViewLayer.Depth.Z" in ch else ch[[n for n in ch if n.endswith(".Z")][0]]
+    png16((np.minimum(z, 60.0) * 1000).round().clip(0, 65535).astype(np.uint16), os.path.join(OUT, "overdepth.png"))
+    for o in hidden:
+        o.hide_render = False
 
-# ---------------------------------------------------------------- 3. over: ramps, wires, plastics, toys alone
-scene.cycles.samples = max(32, SAMPLES // 2)
-scene.cycles.use_denoising = True
-scene.render.film_transparent = True
-scene.cycles.film_transparent_glass = True
-over_set = set(over)
-for o in scene.objects:
-    if o.type in ("MESH", "CURVE") and o not in over_set and not o.hide_render:
-        o.is_holdout = True
-scene.render.image_settings.media_type = "IMAGE"; scene.render.image_settings.file_format = "PNG"
-scene.render.image_settings.color_mode = "RGBA"
-scene.render.image_settings.color_depth = "8"
-scene.render.filepath = os.path.join(OUT, "over.png")
-bpy.ops.render.render(write_still=True)
-print("  rendered over", flush=True)
+    # ---------------------------------------------------------------- 3. over: ramps, wires, plastics, toys alone
+    scene.cycles.samples = max(32, SAMPLES // 2)
+    scene.cycles.use_denoising = True
+    scene.render.film_transparent = True
+    scene.cycles.film_transparent_glass = True
+    over_set = set(over)
+    for o in scene.objects:
+        if o.type in ("MESH", "CURVE") and o not in over_set and not o.hide_render:
+            o.is_holdout = True
+    scene.render.image_settings.media_type = "IMAGE"; scene.render.image_settings.file_format = "PNG"
+    scene.render.image_settings.color_mode = "RGBA"
+    scene.render.image_settings.color_depth = "8"
+    scene.render.filepath = os.path.join(OUT, "over.png")
+    bpy.ops.render.render(write_still=True)
+    print("  rendered over", flush=True)
 
 
 # ---------------------------------------------------------------- 4. flippers, drop targets, plunger: each in its box
@@ -328,39 +345,40 @@ def sprite(objs, path, box):
     return [ox, oy]
 
 
-K = int(os.environ.get("FRAMES", 12))
-for fid, f in flips.items():
-    objs = groups.get("flip:" + fid, [])
-    if not objs:
-        continue
-    reach = f["length"] + f["base"] + 4
-    pts = [to_px(f["px"] + dx, f["py"] + dy, h) for dx in (-reach, reach) for dy in (-reach, reach) for h in (0, 10)]
-    box = (min(p[0] for p in pts) - 4, min(p[1] for p in pts) - 4, max(p[0] for p in pts) + 4, max(p[1] for p in pts) + 4)
-    pivot = P(f["px"], f["py"], 0)
-    orig = {o: o.matrix_world.copy() for o in objs}
-    frames = []
-    for i in range(K):
-        a = f["rest"] + (f["up"] - f["rest"]) * i / (K - 1)
-        d = a - f["rest"]
-        R = Matrix.Translation(pivot) @ Matrix.Rotation(-d, 4, "Z") @ Matrix.Translation(-pivot)
+if not ONLY:
+    K = int(os.environ.get("FRAMES", 12))
+    for fid, f in flips.items():
+        objs = groups.get("flip:" + fid, [])
+        if not objs:
+            continue
+        reach = f["length"] + f["base"] + 4
+        pts = [to_px(f["px"] + dx, f["py"] + dy, h) for dx in (-reach, reach) for dy in (-reach, reach) for h in (0, 10)]
+        box = (min(p[0] for p in pts) - 4, min(p[1] for p in pts) - 4, max(p[0] for p in pts) + 4, max(p[1] for p in pts) + 4)
+        pivot = P(f["px"], f["py"], 0)
+        orig = {o: o.matrix_world.copy() for o in objs}
+        frames = []
+        for i in range(K):
+            a = f["rest"] + (f["up"] - f["rest"]) * i / (K - 1)
+            d = a - f["rest"]
+            R = Matrix.Translation(pivot) @ Matrix.Rotation(-d, 4, "Z") @ Matrix.Translation(-pivot)
+            for o in objs:
+                o.matrix_world = R @ orig[o]
+            off = sprite(objs, os.path.join(OUT, "flip-%s-%d.png" % (fid, i)), box)
+            frames.append(off)
         for o in objs:
-            o.matrix_world = R @ orig[o]
-        off = sprite(objs, os.path.join(OUT, "flip-%s-%d.png" % (fid, i)), box)
-        frames.append(off)
-    for o in objs:
-        o.matrix_world = orig[o]
-    meta["flippers"][fid] = {"frames": K, "offset": frames[0], "rest": f["rest"], "up": f["up"]}
-    print("  flipper", fid, flush=True)
-for k, objs in groups.items():
-    if not k.startswith("drop:"):
-        continue
-    did = k[5:]
-    p = next(q for q in data["parts"] if q["kind"] == "drop" and q["names"] and q["names"][0] == did)
-    x, y = p["nums"][0], p["nums"][1]
-    z = heights_of(p["layer"])
-    pts = [to_px(x + dx, y + dy, z + h) for dx in (-8, 8) for dy in (-6, 6) for h in (0, 12)]
-    box = (min(q[0] for q in pts) - 4, min(q[1] for q in pts) - 4, max(q[0] for q in pts) + 4, max(q[1] for q in pts) + 4)
-    meta["drops"][did] = sprite(objs, os.path.join(OUT, "drop-%s.png" % did), box)
+            o.matrix_world = orig[o]
+        meta["flippers"][fid] = {"frames": K, "offset": frames[0], "rest": f["rest"], "up": f["up"]}
+        print("  flipper", fid, flush=True)
+    for k, objs in groups.items():
+        if not k.startswith("drop:"):
+            continue
+        did = k[5:]
+        p = next(q for q in data["parts"] if q["kind"] == "drop" and q["names"] and q["names"][0] == did)
+        x, y = p["nums"][0], p["nums"][1]
+        z = heights_of(p["layer"])
+        pts = [to_px(x + dx, y + dy, z + h) for dx in (-8, 8) for dy in (-6, 6) for h in (0, 12)]
+        box = (min(q[0] for q in pts) - 4, min(q[1] for q in pts) - 4, max(q[0] for q in pts) + 4, max(q[1] for q in pts) + 4)
+        meta["drops"][did] = sprite(objs, os.path.join(OUT, "drop-%s.png" % did), box)
 # the plunger at KP pulls: tip and rod move back by up to TRAVEL units, the spring is squeezed against the housing
 KP, TRAVEL = int(os.environ.get("PULLS", 8)), 12.0
 pobjs = groups.get("plunger", [])
@@ -385,58 +403,59 @@ if pobjs:
     print("  plunger", flush=True)
 scene.render.use_border = False
 
-# ---------------------------------------------------------------- 5. what a chrome ball reflects: panoramas on a grid
-# with every lamp lit, as a ball in play mostly sees them
-for thing, value in saved:
-    if hasattr(thing, "energy"):
-        thing.energy = value
-    else:
-        thing.default_value = value
-for o in scene.objects:
-    o.is_holdout = False
-for o in over:
-    o.hide_render = False
-scene.render.film_transparent = False
-# the room the machine stands in, as a ball sees it through the glass: dim, with two fluorescent tubes above
-world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.03, 0.028, 0.035, 1)
-world.node_tree.nodes["Background"].inputs["Strength"].default_value = 1.0
-M_TUBE = mat("tube", (1, 1, 1, 1), emit=(0.95, 0.97, 1.0, 1), estr=float(os.environ.get("TUBE", 6)))
-for tx in (W * 0.28, W * 0.72):
-    t = prism("tube%d" % int(tx), [(tx - 3, 40), (tx + 3, 40), (tx + 3, 330), (tx - 3, 330)], 150, 152, M_TUBE)
+if not ONLY:
+    # ---------------------------------------------------------------- 5. what a chrome ball reflects: panoramas on a grid
+    # with every lamp lit, as a ball in play mostly sees them
+    for thing, value in saved:
+        if hasattr(thing, "energy"):
+            thing.energy = value
+        else:
+            thing.default_value = value
+    for o in scene.objects:
+        o.is_holdout = False
+    for o in over:
+        o.hide_render = False
+    scene.render.film_transparent = False
+    # the room the machine stands in, as a ball sees it through the glass: dim, with two fluorescent tubes above
+    world.node_tree.nodes["Background"].inputs["Color"].default_value = (0.03, 0.028, 0.035, 1)
+    world.node_tree.nodes["Background"].inputs["Strength"].default_value = 1.0
+    M_TUBE = mat("tube", (1, 1, 1, 1), emit=(0.95, 0.97, 1.0, 1), estr=float(os.environ.get("TUBE", 6)))
+    for tx in (W * 0.28, W * 0.72):
+        t = prism("tube%d" % int(tx), [(tx - 3, 40), (tx + 3, 40), (tx + 3, 330), (tx - 3, 330)], 150, 152, M_TUBE)
+        for attr in ("visible_diffuse", "visible_glossy", "visible_transmission", "visible_volume_scatter", "visible_shadow"):
+            setattr(t, attr, False)
+    # and the lit backbox standing over the head of the table
+    M_BOX = mat("backboxlight", (1, 1, 1, 1), emit=(1.0, 0.82, 0.62, 1), estr=float(os.environ.get("BOXLIGHT", 1.5)))
+    bb = bpy.data.meshes.new("backboxlight")
+    bb.from_pydata([P(-10, -45, 60), P(W + 10, -45, 60), P(W + 10, -60, 200), P(-10, -60, 200)], [], [(0, 1, 2, 3)])
+    bbo = obj("backboxlight", bb, M_BOX)
     for attr in ("visible_diffuse", "visible_glossy", "visible_transmission", "visible_volume_scatter", "visible_shadow"):
-        setattr(t, attr, False)
-# and the lit backbox standing over the head of the table
-M_BOX = mat("backboxlight", (1, 1, 1, 1), emit=(1.0, 0.82, 0.62, 1), estr=float(os.environ.get("BOXLIGHT", 1.5)))
-bb = bpy.data.meshes.new("backboxlight")
-bb.from_pydata([P(-10, -45, 60), P(W + 10, -45, 60), P(W + 10, -60, 200), P(-10, -60, 200)], [], [(0, 1, 2, 3)])
-bbo = obj("backboxlight", bb, M_BOX)
-for attr in ("visible_diffuse", "visible_glossy", "visible_transmission", "visible_volume_scatter", "visible_shadow"):
-    setattr(bbo, attr, False)
-GX, GY, PW, PH = 6, 10, 64, 32
-pcam = bpy.data.cameras.new("probe")
-pcam.type = "PANO"
-try:
-    pcam.panorama_type = "EQUIRECTANGULAR"
-except Exception:
-    pcam.cycles.panorama_type = "EQUIRECTANGULAR"
-po = bpy.data.objects.new("probe", pcam)
-col.objects.link(po)
-po.rotation_euler = (math.pi / 2, 0, -math.pi / 2)
-scene.camera = po
-scene.render.resolution_x, scene.render.resolution_y = PW, PH
-scene.cycles.samples = 24
-atlas = np.zeros((GY * PH, GX * PW, 3), np.uint8)
-for gy in range(GY):
-    for gx in range(GX):
-        x = 16 + (200 - 16) * gx / (GX - 1)
-        y = 30 + (350 - 30) * gy / (GY - 1)
-        po.location = P(x, y, 5.5)
-        scene.render.filepath = os.path.join(SCRATCH, "probe.png")
-        bpy.ops.render.render(write_still=True)
-        a = load_png(scene.render.filepath)[..., :3]
-        atlas[gy * PH:(gy + 1) * PH, gx * PW:(gx + 1) * PW] = (a * 255).round().astype(np.uint8)
-png_write(atlas, os.path.join(OUT, "probes.png"))
-meta["probes"] = {"nx": GX, "ny": GY, "w": PW, "h": PH, "x0": 16, "x1": 200, "y0": 30, "y1": 350}
+        setattr(bbo, attr, False)
+    GX, GY, PW, PH = 6, 10, 64, 32
+    pcam = bpy.data.cameras.new("probe")
+    pcam.type = "PANO"
+    try:
+        pcam.panorama_type = "EQUIRECTANGULAR"
+    except Exception:
+        pcam.cycles.panorama_type = "EQUIRECTANGULAR"
+    po = bpy.data.objects.new("probe", pcam)
+    col.objects.link(po)
+    po.rotation_euler = (math.pi / 2, 0, -math.pi / 2)
+    scene.camera = po
+    scene.render.resolution_x, scene.render.resolution_y = PW, PH
+    scene.cycles.samples = 24
+    atlas = np.zeros((GY * PH, GX * PW, 3), np.uint8)
+    for gy in range(GY):
+        for gx in range(GX):
+            x = 16 + (200 - 16) * gx / (GX - 1)
+            y = 30 + (350 - 30) * gy / (GY - 1)
+            po.location = P(x, y, 5.5)
+            scene.render.filepath = os.path.join(SCRATCH, "probe.png")
+            bpy.ops.render.render(write_still=True)
+            a = load_png(scene.render.filepath)[..., :3]
+            atlas[gy * PH:(gy + 1) * PH, gx * PW:(gx + 1) * PW] = (a * 255).round().astype(np.uint8)
+    png_write(atlas, os.path.join(OUT, "probes.png"))
+    meta["probes"] = {"nx": GX, "ny": GY, "w": PW, "h": PH, "x0": 16, "x1": 200, "y0": 30, "y1": 350}
 json.dump(meta, open(os.path.join(OUT, "table.json"), "w"), indent=1)
 print("DONE", OUT, flush=True)
 # the same, as lines the game reads without a JSON library

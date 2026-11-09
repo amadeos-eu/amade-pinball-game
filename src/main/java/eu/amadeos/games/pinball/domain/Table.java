@@ -58,6 +58,8 @@ public final class Table {
     private final Map<Ball, double[]> before = new IdentityHashMap<>();
     private long steps;
     private Ball captive;
+    /** The raised floors: layer, x, y, width, length. */
+    private final List<double[]> floors = new ArrayList<>();
     private boolean kickbackLit;
     private double time;
 
@@ -195,6 +197,7 @@ public final class Table {
             case "floor" -> {
                 double x = p.num(1), y = p.num(2), w = p.num(3), h = p.num(4);
                 field.layer((int) p.num(0), p.num(5));
+                floors.add(new double[]{p.num(0), x, y, w, h});
                 // the raised floor is a box on the playfield: balls below bounce off its sides. Its far
                 // side is a shallow roof with cut corners, so a ball that comes round the top neither rests
                 // on it nor sticks between it and the rim.
@@ -429,6 +432,22 @@ public final class Table {
         ball.vy = vy * 1.15;
     }
 
+    /**
+     * A ball that leaves a raised floor over its open edge, clear of the floor's sides, falls down to the
+     * playfield, as it does at the machine.
+     */
+    private void offTheEdge() {
+        for (Ball b : field.balls()) {
+            if (b.layer == 0 || b.state != Ball.State.FREE || b.captive) continue;
+            boolean on = false;
+            for (double[] f : floors) {
+                double m = b.radius + 1.2;
+                if (f[0] == b.layer && b.x > f[1] - m && b.x < f[1] + f[3] + m && b.y > f[2] - m && b.y < f[2] + f[4] + m) on = true;
+            }
+            if (!on) b.layer = 0;
+        }
+    }
+
     /** Runs {@code action} after {@code delay} seconds, on the loop thread during {@link #step}. */
     public void later(double delay, Runnable action) {
         pending.add(new double[]{time + delay, pendingActions.size()});
@@ -442,6 +461,7 @@ public final class Table {
         before.clear();
         for (Ball b : field.balls()) before.put(b, new double[]{b.x, b.y, b.height(field)});
         field.step(seconds * PACE);
+        offTheEdge();
         for (double[] s : spinners.values()) {
             s[0] += s[1] * seconds;
             s[1] *= Math.max(0, 1 - 1.2 * seconds);
